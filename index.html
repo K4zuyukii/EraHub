@@ -2,520 +2,428 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ERA HUB</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Era Wallet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark-primary: #0a0a0c;
-      --bg-dark-secondary: #0c1a2c;
-      --bg-dark-accent: #152538;
-
-      --neon-green-primary: #00ff99; /* Brighter, more vibrant green */
-      --neon-green-shadow: rgba(0, 255, 153, 0.7);
-      --neon-blue-primary: #00bfff; /* Sky blue */
-      --neon-blue-shadow: rgba(0, 191, 255, 0.7);
-      --neon-yellow-primary: #ffdd4a; /* Golden yellow */
-      --neon-yellow-shadow: rgba(255, 221, 74, 0.7);
-
+      --bg-dark: #121212;
+      --bg-medium: #1e1e1e;
+      --bg-light: #2c2c2c;
+      --primary-accent: #00e676; /* Green */
+      --secondary-accent: #ffeb3b; /* Yellow */
       --text-light: #e0e0e0;
-      --text-dimmed: #b0b0b0;
-
-      --container-bg: rgba(10, 15, 25, 0.95); /* Deeper, slightly translucent */
-      --card-bg: rgba(20, 30, 45, 0.8); /* For menu items */
-
-      --shadow-intensity-high: 0.9;
-      --shadow-intensity-medium: 0.6;
-      --shadow-intensity-low: 0.3;
-      --border-radius-primary: 15px;
-      --border-radius-secondary: 10px;
-    }
-
-    /* --- IMPORTANT CSS CHANGES FOR SCROLLING --- */
-    html {
-      height: 100%; /* Ensure html takes full height */
+      --text-dark: #333;
+      --border-color: #3a3a3a;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --input-bg: #333;
+      --button-hover: #00c853;
+      --link-color: #03a9f4; /* Light Blue */
     }
 
     body {
-      font-family: 'Share Tech Mono', monospace;
-      background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 50%, var(--bg-dark-accent) 100%);
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
       color: var(--text-light);
       text-align: center;
-      padding: 30px 20px; /* Keep padding here for overall page spacing */
+      padding: 20px;
       margin: 0;
-      min-height: 100vh; /* Make body at least viewport height */
       display: flex;
-      flex-direction: column; /* Allows content to stack vertically */
-      align-items: center; /* Centers container horizontally */
-      justify-content: flex-start; /* Content starts from the top, allowing scroll */
-      overflow-y: auto; /* Allow vertical scrolling on the body */
-      -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
-      position: relative;
-      background-attachment: fixed; /* Ensures gradient background stays put */
-      box-sizing: border-box; /* Include padding in height calculations */
-    }
-    /* --- END CSS CHANGES FOR SCROLLING --- */
-
-
-    /* Animated Grid Background */
-    body::before {
-      content: '';
-      position: fixed; /* Changed to fixed so it doesn't scroll with content */
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image:
-        linear-gradient(to right, rgba(0, 255, 153, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 255, 153, 0.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      animation: gridFlow 30s linear infinite;
-      z-index: 0;
-      pointer-events: none; /* Allows clicks to pass through */
-    }
-
-    @keyframes gridFlow {
-      from { background-position: 0 0; }
-      to { background-position: 40px 40px; }
-    }
-
-    /* Particle Canvas */
-    #particle-canvas {
-      position: fixed; /* Changed to fixed so it doesn't scroll with content */
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none; /* Allows clicks to pass through */
+      justify-content: center;
+      align-items: flex-start; /* Align to the top to prevent jumping on content changes */
+      min-height: 100vh;
+      box-sizing: border-box;
     }
 
     .container {
-      max-width: 980px;
+      max-width: 480px;
       width: 100%;
-      background: var(--container-bg);
-      padding: 50px 40px;
-      border-radius: var(--border-radius-primary);
-      box-shadow:
-        0 0 60px var(--neon-green-shadow), /* Primary glow */
-        0 0 120px var(--neon-blue-shadow); /* Secondary subtle glow */
-      backdrop-filter: blur(15px) brightness(1.1); /* Stronger blur, brighter effect */
-      border: 2px solid var(--neon-green-primary);
-      animation: fadeIn 1.2s ease-in-out forwards;
-      position: relative;
-      z-index: 2; /* Ensure container is above particles and grid */
-      transform-style: preserve-3d; /* For subtle parallax effects if needed */
-      margin-top: auto; /* Allows centering if content is short, but moves to top if tall */
-      margin-bottom: auto; /* Allows centering if content is short, but moves to top if tall */
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(50px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      background-color: var(--bg-medium);
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      margin-top: 40px;
+      transition: all 0.3s ease-in-out;
+      border: 1px solid var(--border-color);
     }
 
     h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 4.5em;
-      color: var(--neon-blue-primary);
-      text-shadow: 0 0 25px var(--neon-blue-shadow), 0 0 50px var(--neon-blue-shadow), 0 0 80px rgba(0, 191, 255, 0.6);
-      margin-bottom: 35px;
-      font-weight: 800;
-      letter-spacing: 4px;
-      position: relative;
-      animation: neonPulse 2.5s infinite alternate ease-in-out;
-      transform-origin: center center;
-    }
-
-    h1 .icon {
-        animation: iconFloat 3s infinite alternate ease-in-out;
-        display: inline-block;
-    }
-
-    @keyframes neonPulse {
-        0% { text-shadow: 0 0 15px var(--neon-blue-shadow), 0 0 30px var(--neon-blue-shadow), 0 0 45px rgba(0, 191, 255, 0.4); transform: scale(1); }
-        100% { text-shadow: 0 0 25px var(--neon-blue-shadow), 0 0 50px var(--neon-blue-shadow), 0 0 75px rgba(0, 191, 255, 0.6); transform: scale(1.02); }
-    }
-    @keyframes iconFloat {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
-        100% { transform: translateY(0px); }
-    }
-
-    .info-section {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin-bottom: 50px;
-        flex-wrap: wrap;
-    }
-
-    .balance, .username {
-      font-size: 1.8em;
-      color: var(--neon-yellow-primary);
-      text-shadow: 0 0 10px var(--neon-yellow-shadow), 0 0 20px rgba(255, 221, 74, 0.5);
+      font-size: 2.2em;
+      color: var(--primary-accent);
+      margin-bottom: 30px;
       font-weight: 700;
-      letter-spacing: 1.2px;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      animation: textGlow 2s infinite alternate ease-in-out;
-      background: rgba(0,0,0,0.2);
-      padding: 12px 25px;
-      border-radius: var(--border-radius-secondary);
-      border: 1px solid rgba(255,221,74,0.3);
-      box-shadow: inset 0 0 8px rgba(255,221,74,0.1);
     }
 
-    .username {
-        color: var(--neon-green-primary);
-        text-shadow: 0 0 10px var(--neon-green-shadow), 0 0 20px rgba(0, 255, 153, 0.5);
-        border: 1px solid rgba(0,255,153,0.3);
-        box-shadow: inset 0 0 8px rgba(0,255,153,0.1);
-        animation-delay: 0.2s;
+    h1 svg {
+      color: var(--secondary-accent);
     }
 
-    @keyframes textGlow {
-        from { text-shadow: 0 0 6px, 0 0 10px rgba(255, 255, 255, 0.3); }
-        to { text-shadow: 0 0 10px, 0 0 15px rgba(255, 255, 255, 0.5); }
-    }
-
-
-    .menu-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      margin-bottom: 60px;
-    }
-
-    .menu-buttons a {
-      background: var(--card-bg);
+    h3 {
+      font-size: 1.4em;
       color: var(--text-light);
-      text-decoration: none;
-      padding: 22px 30px;
-      font-size: 1.3em;
-      border-radius: var(--border-radius-secondary);
-      font-weight: 700;
-      box-shadow: 0 0 15px rgba(0, 255, 153, 0.2), inset 0 0 8px rgba(0, 255, 153, 0.08);
-      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      border: 1px solid rgba(0, 255, 153, 0.3);
-      position: relative;
-      overflow: hidden; /* For shimmer effect */
+      margin-top: 35px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
     }
 
-    .menu-buttons a::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -180%;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-      transform: skewX(-20deg);
-      transition: left 0.8s ease-out;
-      pointer-events: none;
+    input, select {
+      width: calc(100% - 24px); /* Account for padding */
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 15px;
+      background-color: var(--input-bg);
+      color: var(--text-light);
+      box-sizing: border-box; /* Include padding in width */
     }
 
-    .menu-buttons a:hover::before {
-      left: 180%;
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-accent);
+      box-shadow: 0 0 0 2px rgba(0, 230, 118, 0.3);
     }
 
-    .menu-buttons a:hover {
-      background: rgba(0, 191, 255, 0.1); /* Frosted glass effect */
-      backdrop-filter: blur(10px) brightness(1.2);
-      color: #fff;
-      transform: translateY(-8px) scale(1.03);
-      box-shadow:
-        0 18px 40px var(--neon-blue-shadow),
-        inset 0 0 12px rgba(0, 191, 255, 0.3);
-      border-color: var(--neon-blue-primary);
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    }
-
-    .auth-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 40px;
-      flex-wrap: wrap;
-    }
-
-    .login-button, .logout-button {
-      display: inline-flex; /* Use flex for icon alignment */
-      align-items: center;
-      background: linear-gradient(45deg, var(--neon-green-primary), #00cc80);
-      color: var(--bg-dark-primary); /* Dark text for contrast */
-      padding: 15px 30px;
-      font-size: 1.2em;
-      border-radius: var(--border-radius-primary);
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 0 25px var(--neon-green-shadow);
-      cursor: pointer;
-      transition: all 0.3s ease;
+    button {
+      padding: 12px 25px;
+      font-size: 1.05em;
+      border-radius: 10px;
       border: none;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
+      margin: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      background-color: var(--primary-accent);
+      color: var(--text-dark);
+      box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
     }
 
-    .login-button::before, .logout-button::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        transform: scale(0);
+    button:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-2px);
     }
 
-    .login-button:hover::before, .logout-button:hover::before {
-        opacity: 1;
-        transform: scale(1);
+    button.secondary {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      border: 1px solid var(--border-color);
+      box-shadow: none;
     }
 
-
-    .login-button:hover, .logout-button:hover {
-      background: linear-gradient(45deg, var(--neon-blue-primary), #0099e6);
-      color: #fff;
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 10px 30px var(--neon-blue-shadow);
+    button.secondary:hover {
+      background-color: var(--border-color);
+      transform: translateY(-2px);
     }
 
-    /* Icons */
-    .fa-solid, .fa-regular {
-        margin-right: 12px;
-        font-size: 1.2em;
-        color: inherit; /* Inherit color from parent for better theme integration */
-        transition: color 0.3s ease;
+    .balance {
+      font-size: 1.8em;
+      margin: 25px 0;
+      color: var(--secondary-accent);
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
-    .menu-buttons a .fa-solid, .menu-buttons a .fa-regular {
-        color: var(--neon-green-primary);
-    }
-    .menu-buttons a:hover .fa-solid, .menu-buttons a:hover .fa-regular {
-        color: var(--neon-blue-primary);
-    }
-
-    .balance .fa-solid { color: var(--neon-yellow-primary); }
-    .username .fa-solid { color: var(--neon-green-primary); }
-    .login-button .fa-solid, .logout-button .fa-solid { color: var(--bg-dark-primary); }
-    .login-button:hover .fa-solid, .logout-button:hover .fa-solid { color: #fff; }
-
-
-    /* Responsive Adjustments */
-    @media (max-width: 900px) {
-      .container {
-        padding: 40px 30px;
-      }
-      h1 {
-        font-size: 3.5em;
-        letter-spacing: 3px;
-      }
-      .info-section {
-        gap: 20px;
-        flex-direction: column;
-        align-items: center;
-      }
-      .balance, .username {
-        font-size: 1.6em;
-        padding: 10px 20px;
-        width: fit-content;
-      }
-      .menu-buttons {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-      }
-      .menu-buttons a {
-        font-size: 1.1em;
-        padding: 18px 25px;
-      }
+    .deposit-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
     }
 
-    @media (max-width: 600px) {
-      body {
-        padding: 20px 10px; /* Reduced padding for smaller screens */
-      }
-      h1 {
-        font-size: 2.5em;
-        letter-spacing: 2px;
-        margin-bottom: 25px;
-      }
-      .container {
-        padding: 30px 20px;
-      }
-      .balance, .username {
-        font-size: 1.3em;
-        padding: 8px 15px;
-        gap: 8px;
-      }
-      .menu-buttons {
-        grid-template-columns: 1fr; /* Stack buttons vertically */
-        gap: 15px;
-      }
-      .menu-buttons a {
-        font-size: 1em;
-        padding: 15px;
-      }
-      .fa-solid, .fa-regular {
-          font-size: 1em;
-          margin-right: 8px;
-      }
-      .login-button, .logout-button {
-        padding: 12px 25px;
-        font-size: 1em;
-        gap: 8px;
-      }
-      .auth-buttons {
-        gap: 15px;
-      }
+    .deposit-buttons button {
+      flex: 1 1 calc(33% - 24px); /* 3 buttons per row */
+      max-width: 120px;
+      padding: 10px 15px;
+      font-size: 0.95em;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      border: 1px solid var(--border-color);
+      box-shadow: none;
     }
 
-    @media (max-width: 400px) {
-      h1 {
-        font-size: 2em;
-        letter-spacing: 1px;
-      }
-      .balance, .username {
-        font-size: 1.1em;
-      }
+    .deposit-buttons button:hover {
+      background-color: var(--primary-accent);
+      color: var(--text-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 230, 118, 0.3);
+    }
+
+    #qr-container {
+      background-color: var(--bg-light);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 0 10px rgba(0, 230, 118, 0.1);
+    }
+
+    #qr-container p {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+      color: var(--primary-accent);
+    }
+
+    #qr-container img {
+      width: 180px;
+      height: 180px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px var(--shadow-color);
+      border: 3px solid var(--primary-accent);
+      background-color: white; /* Ensure QR code background is visible */
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 30px;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: var(--primary-accent);
+    }
+
+    /* Utility classes for icons */
+    .icon {
+        vertical-align: middle;
+        margin-right: 5px;
     }
   </style>
 </head>
 <body>
-  <canvas id="particle-canvas"></canvas> <!-- Particle background -->
-  <div class="container">
-    <h1><i class="fa-solid fa-cube"></i> ERA HUB</h1>
-    <div class="info-section">
-        <div class="balance"><i class="fa-solid fa-coins"></i> Balance: ₱<span id="coins">0</span></div>
-        <div class="username"><i class="fa-solid fa-user-astronaut"></i> Logged in as: <span id="user-display">Guest</span></div>
+  <div class="container" id="auth-screen">
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Era Wallet Login</h1>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <button onclick="signup()" class="secondary">Signup</button>
+  </div>
+
+  <div class="container" id="wallet-screen" style="display:none;">
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M20 7h-9"></path><path d="M14 17H5"></path><path d="M6 17a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path><path d="M18 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path><path d="M20 17a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path></svg> My Wallet</h1>
+    <p>Welcome, <span id="user-display"></span>!</p>
+    <div class="balance">Current Balance: ₱<span id="coins">0</span></div>
+
+    <h3><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg> Deposit Funds</h3>
+    <p>Select Deposit Amount:</p>
+    <div class="deposit-buttons">
+      <button onclick="showQRCode(50)">₱50</button>
+      <button onclick="showQRCode(100)">₱100</button>
+      <button onclick="showQRCode(200)">₱200</button>
+      <button onclick="showQRCode(500)">₱500</button>
+      <button onclick="showQRCode(1000)">₱1000</button>
     </div>
 
-    <div class="menu-buttons">
-      <a href="card.html"><i class="fa-solid fa-hand-cards"></i> Card Draw 21</a>
-      <a href="slots.html"><i class="fa-solid fa-gamepad"></i> Slot Machine</a>
-      <a href="dice.html"><i class="fa-solid fa-dice"></i> Dice Roll</a>
-      <a href="plingko.html"><i class="fa-solid fa-droplet"></i> Plingko</a>
-      <a href="crashgame.html"><i class="fa-solid fa-chart-line"></i> Crash</a>
-      <a href="mines.html"><i class="fa-solid fa-bomb"></i> Mines</a>
-      <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
+    <div id="qr-container" style="display:none;">
+      <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Scan QR to deposit ₱<span id="qr-amount">0</span></p>
+      <img id="qr-image" src="" alt="GCash QR Code" /> <!-- src is empty, filled by JS -->
+      <input type="text" id="reference-code" placeholder="Enter GCash Reference Code" />
+      <button onclick="submitDepositRequest()">Submit to Admin</button>
     </div>
 
-    <div class="auth-buttons" id="auth-buttons">
-      <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
-      <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-    </div>
+    <h3><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg> Request Withdrawal</h3>
+    <input type="number" id="withdraw-amount" placeholder="Amount (₱)" min="1" />
+    <select id="withdraw-method">
+      <option value="">Select Method</option>
+      <option value="GCash">GCash</option>
+      <option value="PayMaya">PayMaya</option>
+      <option value="GoTyme">GoTyme</option>
+      <option value="Bank">Bank</option>
+    </select>
+    <input type="text" id="withdraw-account" placeholder="Phone or Account Number" />
+    <button onclick="submitWithdrawRequest()">Submit Withdrawal</button>
+
+    <br><br>
+    <a href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back to Era Hub</a>
   </div>
 
   <script>
-    // Particle background script
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    const particleCount = 70;
-    const particleColor = 'rgba(0, 255, 153, 0.4)'; // Neon green for particles
-    const particleSpeed = 0.5; // Adjust speed
-
-    function setCanvasSize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 1 - 0.5 * particleSpeed; // -0.5 to 0.5
-        this.speedY = Math.random() * 1 - 0.5 * particleSpeed;
-        this.opacity = Math.random() * 0.8 + 0.2;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.size > 0.1) this.size -= 0.01; // Fade out slightly
-        if (this.opacity > 0.05) this.opacity -= 0.005;
-
-        // Reset particle if it goes off screen or becomes too small
-        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.size <= 0.1 || this.opacity <= 0.05) {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.size = Math.random() * 2 + 0.5;
-          this.speedX = Math.random() * 1 - 0.5 * particleSpeed;
-          this.speedY = Math.random() * 1 - 0.5 * particleSpeed;
-          this.opacity = Math.random() * 0.8 + 0.2;
-        }
-      }
-      draw() {
-        ctx.fillStyle = `rgba(0, 255, 153, ${this.opacity})`; // Use neon green with dynamic opacity
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      requestAnimationFrame(animateParticles);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-      }
-    }
-
-    window.addEventListener('resize', () => {
-      setCanvasSize();
-      initParticles(); // Re-initialize particles on resize
-    });
-
-    // Main app logic
-    const currentUser = localStorage.getItem("currentUser");
+    let currentUser = localStorage.getItem("currentUser");
     let coins = 0;
 
-    if (currentUser) {
-      const savedBalance = localStorage.getItem(`balance_${currentUser}`);
-      coins = savedBalance ? parseInt(savedBalance) : 0;
-      document.getElementById("user-display").textContent = currentUser;
-      document.getElementById("logout-btn").style.display = "inline-flex"; // Use inline-flex for button
-      document.getElementById("login-btn").style.display = "none";
-    } else {
-      coins = 0;
-      document.getElementById("user-display").textContent = "Guest";
-      document.getElementById("logout-btn").style.display = "none";
-      document.getElementById("login-btn").style.display = "inline-flex"; // Use inline-flex for button
+    // Initial check for user login to display wallet or auth screen
+    function initializeWalletScreen() {
+        currentUser = localStorage.getItem("currentUser"); // Re-check in case of redirect
+        if (currentUser) {
+            if (currentUser === "admin") {
+                window.location.href = "admin.html"; // Redirect admin immediately
+                return;
+            }
+            const savedBalance = localStorage.getItem(`balance_${currentUser}`);
+            coins = savedBalance ? parseInt(savedBalance) : 0;
+            document.getElementById('user-display').textContent = currentUser;
+            document.getElementById('coins').textContent = coins.toLocaleString(); // Format balance
+            document.getElementById('auth-screen').style.display = "none";
+            document.getElementById('wallet-screen').style.display = "block";
+        } else {
+            document.getElementById('auth-screen').style.display = "block";
+            document.getElementById('wallet-screen').style.display = "none";
+        }
     }
 
-    document.getElementById("coins").textContent = coins.toLocaleString(); // Format with commas
+    initializeWalletScreen(); // Call on page load
 
-    function logout() {
-      localStorage.removeItem("currentUser");
-      // Redirect to wallet or login page
-      window.location.href = "wallet.html";
+    function signup() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        alert("Please enter both username and password.");
+        return;
+      }
+
+      if (username.toLowerCase() === "admin") {
+        alert("Reserved username. Please choose another.");
+        return;
+      }
+
+      // Use .toLowerCase() for consistency in localStorage keys
+      const usernameKey = `user_${username.toLowerCase()}`;
+      if (localStorage.getItem(usernameKey)) {
+        alert("Username already exists. Please choose another.");
+        return;
+      }
+
+      localStorage.setItem(usernameKey, password);
+      localStorage.setItem(`balance_${username.toLowerCase()}`, "1000"); // Give new users 1000 coins
+      localStorage.setItem("currentUser", username.toLowerCase()); // Log in the new user
+
+      alert("Signup successful! Welcome to Era Hub!");
+      window.location.href = "index.html"; // Redirect to main hub
     }
 
-    // Initialize particle system
-    setCanvasSize();
-    initParticles();
-    animateParticles();
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        alert("Please enter both username and password.");
+        return;
+      }
+
+      // Admin login special case
+      if (username.toLowerCase() === "admin" && password === "Umaysa2022@") {
+        localStorage.setItem("currentUser", "admin");
+        window.location.href = "admin.html";
+        return;
+      }
+
+      // Regular user login
+      const usernameKey = `user_${username.toLowerCase()}`;
+      const storedPassword = localStorage.getItem(usernameKey);
+      if (!storedPassword) {
+        alert("Username not found. Please sign up first.");
+        return;
+      }
+
+      if (storedPassword !== password) {
+        alert("Incorrect password.");
+        return;
+      }
+
+      localStorage.setItem("currentUser", username.toLowerCase()); // Set current user
+      alert(`Welcome back, ${username}!`);
+      window.location.href = "index.html"; // Redirect to main hub
+    }
+
+    function showQRCode(amount) {
+      if (!currentUser || currentUser === "guest") {
+        alert("Please login to deposit funds.");
+        return;
+      }
+      document.getElementById('qr-amount').textContent = amount.toLocaleString();
+      // Ensure you have images like 50gcash.jpg, 100gcash.jpg in an 'images' folder
+      document.getElementById('qr-image').src = `images/${amount}gcash.jpg`; 
+      document.getElementById('qr-container').style.display = "block";
+    }
+
+    function submitDepositRequest() {
+      if (!currentUser || currentUser === "guest") {
+        alert("Please login to submit a deposit request.");
+        return;
+      }
+
+      const amount = parseInt(document.getElementById("qr-amount").textContent.replace(/,/g, ''));
+      const refCode = document.getElementById("reference-code").value.trim();
+
+      if (!amount || isNaN(amount) || !refCode) {
+        alert("Please enter a valid amount and reference code.");
+        return;
+      }
+
+      const request = {
+        username: currentUser,
+        amount,
+        refCode,
+        timestamp: new Date().toISOString(),
+        status: "Pending"
+      };
+
+      let requests = JSON.parse(localStorage.getItem("depositRequests") || "[]");
+      requests.push(request);
+      localStorage.setItem("depositRequests", JSON.stringify(requests));
+
+      alert("Deposit request submitted to admin. Please wait for approval.");
+      document.getElementById("qr-container").style.display = "none";
+      document.getElementById("reference-code").value = "";
+    }
+
+    function submitWithdrawRequest() {
+      if (!currentUser || currentUser === "guest") {
+        alert("Please login to submit a withdrawal request.");
+        return;
+      }
+      
+      const amountInput = document.getElementById("withdraw-amount");
+      const amount = parseInt(amountInput.value);
+      const method = document.getElementById("withdraw-method").value;
+      const account = document.getElementById("withdraw-account").value.trim();
+
+      if (!amount || amount <= 0 || !method || !account) {
+        alert("Please fill in all withdrawal fields with valid data.");
+        return;
+      }
+
+      if (amount > coins) {
+        alert("Insufficient balance. Your current balance is ₱" + coins.toLocaleString());
+        return;
+      }
+
+      // Deduct funds immediately (optimistic update)
+      coins -= amount;
+      localStorage.setItem(`balance_${currentUser}`, coins.toString());
+      document.getElementById("coins").textContent = coins.toLocaleString(); // Update display
+
+      const request = {
+        username: currentUser,
+        amount,
+        method,
+        account,
+        timestamp: new Date().toISOString(),
+        status: "Pending"
+      };
+
+      let requests = JSON.parse(localStorage.getItem("withdrawRequests") || "[]");
+      requests.push(request);
+      localStorage.setItem("withdrawRequests", JSON.stringify(requests));
+
+      alert("Withdrawal request submitted. Balance deducted. Awaiting admin approval.");
+      
+      // Clear fields
+      amountInput.value = "";
+      document.getElementById("withdraw-method").value = "";
+      document.getElementById("withdraw-account").value = "";
+    }
   </script>
 </body>
 </html>
