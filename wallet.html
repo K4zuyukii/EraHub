@@ -333,7 +333,8 @@
 
     function showQRCode(amount) {
       document.getElementById('qr-amount').textContent = amount.toLocaleString();
-      document.getElementById('qr-image').src = `images/${amount}gcash.jpg`; // Make sure your image paths are correct
+      // CHANGED THIS LINE: Removed 'images/' prefix
+      document.getElementById('qr-image').src = `${amount}gcash.jpg`; 
       document.getElementById('qr-container').style.display = "block";
     }
 
