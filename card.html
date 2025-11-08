@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 🃏 Card Draw 21</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* General Body Styling */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0d0d1e; /* Darker, almost black background */
+      color: #e0e0e0; /* Softer white for general text */
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* Prevent scrollbars from glowing elements */
+      position: relative;
+    }
+
+    /* Background Animation - for the subtle glowing particles */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(30, 0, 50, 0.3) 0%, transparent 70%);
+        animation: subtlePulse 15s infinite alternate;
+        z-index: -1;
+    }
+
+    @keyframes subtlePulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        100% { transform: scale(1.1); opacity: 0.9; }
+    }
+
+
+    /* Main Container */
+    .container {
+      max-width: 800px; /* Slightly wider */
+      width: 95%; /* Responsive width */
+      background: #1c1c2e; /* Darker background for the container */
+      padding: 30px;
+      border-radius: 25px; /* More rounded */
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.4), inset 0 0 20px rgba(0, 255, 255, 0.15); /* Stronger neon glow */
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(0, 255, 255, 0.6); /* More prominent border */
+      animation: fadeIn 1s ease-out;
+      position: relative;
+      z-index: 1; /* Ensure container is above background effects */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Game Title */
+    h1 {
+      font-size: 3.8em; /* Larger title */
+      color: #00ffff;
+      text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; /* More intense glow */
+      margin-bottom: 35px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      animation: neonFlicker 1.5s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+        0%, 100% { text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; }
+        50% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff; }
+    }
+
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Three columns for better layout */
+      gap: 15px 10px; /* Gap between grid items */
+      margin-bottom: 35px;
+      background: rgba(0, 0, 0, 0.4); /* Darker background for scoreboard */
+      padding: 15px 25px;
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.08);
+      color: #e0e0e0;
+      font-size: 1.1em;
+    }
+
+    .scoreboard p, .scoreboard label {
+      margin: 0; /* Remove default paragraph margins */
+      padding: 5px 0;
+      color: #00ffcc; /* Player/Banker score color */
+      font-weight: 600;
+      text-shadow: none;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scoreboard p span, .scoreboard input {
+      color: #ffffff; /* Score values are brighter */
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .scoreboard label {
+        grid-column: span 3; /* Label spans all columns */
+        justify-content: center;
+        margin-bottom: 5px;
+        color: #00ffff;
+        font-size: 1.2em;
+        text-shadow: 0 0 8px #00ffff;
+    }
+
+    .scoreboard input {
+      padding: 8px 12px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      border: 1px solid #00ffff;
+      background-color: #0d0d1e; /* Dark input background */
+      color: #00ffcc;
+      text-align: center;
+      margin: 0;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      transition: all 0.2s ease;
+      width: 80%; /* Smaller width for input */
+      max-width: 150px;
+      justify-self: center; /* Center input in its grid cell */
+    }
+
+    .scoreboard input:focus {
+        outline: none;
+        border-color: #00ff88;
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    }
+
+    /* Custom Card Display (Matches Image) */
+    .card-display-wrapper {
+        display: flex;
+        justify-content: center;
+        gap: 25px; /* Space between player and banker card boxes */
+        margin: 30px 0;
+    }
+
+    .card-display {
+      font-family: 'Consolas', monospace; /* Monospace for card text */
+      font-size: 2.2em; /* Smaller font for multiple cards */
+      line-height: 1.2;
+      width: 180px; /* Wider card */
+      min-height: 220px; /* Taller card */
+      background: #2a2a3e; /* Darker background for card */
+      border-radius: 18px; /* More rounded */
+      box-shadow: 0 0 25px rgba(0, 255, 204, 0.6); /* Prominent card glow */
+      display: flex;
+      flex-direction: column; /* Stack content vertically */
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(0, 255, 255, 0.4);
+      transition: all 0.4s ease;
+      padding: 15px; /* Add some internal padding */
+    }
+
+    .card-display:hover {
+        transform: translateY(-8px) scale(1.02); /* Lift and slightly scale on hover */
+        box-shadow: 0 0 35px rgba(0, 255, 204, 0.8), 0 10px 20px rgba(0, 255, 204, 0.3);
+    }
+
+    /* Card Suit and Value styling */
+    .card-content {
+        display: flex;
+        flex-wrap: wrap; /* Allow cards to wrap */
+        justify-content: center;
+        align-items: center;
+        gap: 8px; /* Space between individual card faces */
+        color: #ffffff; /* Default card text color */
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Specific styling for red suits */
+    .card-content span.red-suit {
+        color: #ff3366; /* Red for Hearts and Diamonds */
+    }
+
+    /* Default symbol for empty card */
+    .card-display.empty-card .card-content {
+        font-size: 4em; /* Larger for the '🂠' symbol */
+        color: #555;
+        text-shadow: none;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px; /* Space between buttons */
+    }
+
+    .action-button {
+      padding: 16px 32px; /* Slightly larger buttons */
+      font-size: 1.2em;
+      border-radius: 15px; /* More rounded */
+      border: none;
+      background: linear-gradient(45deg, #00ff88, #00cc66);
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0, 255, 136, 0.6); /* Stronger glow */
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease-out; /* Slower sweep effect */
+    }
+
+    .action-button:hover::before {
+      left: 100%;
+    }
+
+    .action-button:hover {
+      background: linear-gradient(45deg, #00cc66, #009944);
+      transform: translateY(-5px); /* More pronounced lift */
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.9), 0 8px 15px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Result Message */
+    .result-message {
+      font-size: 1.6em; /* Larger result message */
+      margin: 25px 0;
+      color: #ff5555; /* Distinct red */
+      text-shadow: 0 0 12px #ff5555, 0 0 25px rgba(255, 85, 85, 0.7); /* Stronger glow */
+      font-weight: bold;
+      animation: pulseText 1s infinite alternate;
+    }
+
+    @keyframes pulseText {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(1.03); opacity: 0.95; }
+    }
+
+    /* Back Button */
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2em;
+      padding: 12px 25px;
+      border-radius: 10px;
+      background: rgba(0, 255, 255, 0.08); /* Lighter, subtle background */
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .back-button:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 0 18px rgba(0, 255, 255, 0.7);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 3em;
+      }
+      .container {
+        padding: 25px 15px;
+      }
+      .scoreboard {
+          grid-template-columns: 1fr; /* Stack scoreboard items on small screens */
+          gap: 10px;
+          font-size: 1em;
+      }
+      .scoreboard label {
+          grid-column: span 1;
+      }
+      .scoreboard input {
+          width: 90%;
+      }
+      .card-display-wrapper {
+          flex-direction: column; /* Stack cards vertically */
+          gap: 15px;
+      }
+      .card-display {
+        width: 140px;
+        min-height: 180px;
+        font-size: 2em;
+        padding: 10px;
+      }
+      .action-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+      }
+      .result-message {
+          font-size: 1.4em;
+      }
+      .back-button {
+          font-size: 1em;
+          padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🃏 Card Draw 21</h1>
+
+    <div class="scoreboard">
+      <p>💰 Balance: ₱<span id="coins">0</span></p>
+      <p>Player Score: <span id="player-score">0</span></p>
+      <p>Banker Score: <span id="banker-score">0</span></p>
+      <label>Enter Bet Amount (₱1–₱500):</label>
+      <input type="number" id="bet-amount" min="1" max="500" step="1" value="10" />
+      <p>Bet: ₱<span id="current-bet">0</span></p>
+      <p>Win: ₱<span id="win-amount">0</span></p>
+    </div>
+
+    <div class="card-display-wrapper">
+        <div class="card-display" id="player-card-display">
+            <div class="card-content">🂠</div>
+        </div>
+        <div class="card-display" id="banker-card-display">
+            <div class="card-content">🂠</div>
+        </div>
+    </div>
+
+
+    <div class="action-buttons">
+        <button class="action-button" onclick="startGame()">🎮 Start</button>
+        <button class="action-button" onclick="drawCard()">🃏 Draw Card</button>
+        <button class="action-button" onclick="endTurn()">🏁 End Turn</button>
+    </div>
+
+    <p id="result" class="result-message"></p>
+    <a href="index.html" class="back-button">⬅ Back to Menu</a>
+
+    <script>
+      const currentUser = localStorage.getItem("currentUser");
+      let coins = 0;
+
+      if (currentUser) {
+        const savedBalance = localStorage.getItem(`balance_${currentUser}`);
+        coins = savedBalance ? parseInt(savedBalance) : 0;
+      }
+
+      let playerScore = 0;
+      let bankerScore = 0;
+      let currentBet = 0;
+      let gameOver = true;
+
+      const suits = ['♠', '♥', '♦', '♣'];
+      const values = [
+        { face: 'A', value: 1 },
+        { face: '2', value: 2 },
+        { face: '3', value: 3 },
+        { face: '4', value: 4 },
+        { face: '5', value: 5 },
+        { face: '6', value: 6 },
+        { face: '7', value: 7 },
+        { face: '8', value: 8 },
+        { face: '9', value: 9 },
+        { face: '10', value: 10 },
+        { face: 'J', value: 10 },
+        { face: 'Q', value: 10 },
+        { face: 'K', value: 10 }
+      ];
+
+      document.getElementById('coins').textContent = coins;
+
+      function updateCardDisplay(elementId, cardsArray) {
+        const cardDisplayEl = document.getElementById(elementId);
+        const cardContentEl = cardDisplayEl.querySelector('.card-content');
+        cardContentEl.innerHTML = ''; // Clear previous cards
+
+        if (cardsArray.length === 0) {
+            cardContentEl.textContent = "🂠";
+            cardDisplayEl.classList.add('empty-card');
+            return;
+        }
+
+        cardDisplayEl.classList.remove('empty-card');
+
+        cardsArray.forEach(card => {
+            const span = document.createElement('span');
+            span.textContent = card;
+            if (card.includes('♥') || card.includes('♦')) {
+                span.classList.add('red-suit');
+            }
+            cardContentEl.appendChild(span);
+        });
+      }
+
+
+      let playerCards = []; // Array to hold player's cards
+      let bankerCards = []; // Array to hold banker's cards
+
+      function startGame() {
+        const betInput = parseInt(document.getElementById('bet-amount').value);
+        currentBet = Math.min(500, Math.max(1, betInput || 0));
+
+        if (coins < currentBet) {
+          alert("Not enough balance to start.");
+          return;
+        }
+
+        coins -= currentBet;
+        saveBalance();
+        document.getElementById('coins').textContent = coins;
+        document.getElementById('current-bet').textContent = currentBet;
+        document.getElementById('win-amount').textContent = "0";
+        playerScore = 0;
+        bankerScore = 0;
+        gameOver = false;
+        document.getElementById('player-score').textContent = "0";
+        document.getElementById('banker-score').textContent = "0";
+
+        playerCards = []; // Reset player cards
+        bankerCards = []; // Reset banker cards
+        updateCardDisplay('player-card-display', playerCards); // Update UI
+        updateCardDisplay('banker-card-display', bankerCards); // Update UI
+
+        document.getElementById('result').textContent = "";
+      }
+
+      function drawCard() {
+        if (gameOver) return;
+
+        const playerSuit = suits[Math.floor(Math.random() * suits.length)];
+        const playerCardValue = values[Math.floor(Math.random() * values.length)];
+        const playerFace = `${playerCardValue.face}${playerSuit}`; // Changed order to match image style
+
+        playerCards.push(playerFace); // Add card to array
+        updateCardDisplay('player-card-display', playerCards); // Update UI
+
+        playerScore += playerCardValue.value;
+        document.getElementById('player-score').textContent = playerScore;
+
+        if (playerScore > 21) {
+          endGame("😲 You busted! Banker wins.", 0);
+          return;
+        } else if (playerScore === 21) {
+          endTurn();
+          return;
+        }
+
+        // Banker draws a card after the player, but only one per player draw initially
+        setTimeout(() => {
+          if (bankerScore < 20 && !gameOver) { // Banker only draws if under 20 and game isn't over
+            const bankerSuit = suits[Math.floor(Math.random() * suits.length)];
+            const bankerCardValue = values[Math.floor(Math.random() * values.length)];
+            const bankerFace = `${bankerCardValue.face}${bankerSuit}`; // Changed order
+
+            bankerCards.push(bankerFace); // Add card to array
+            updateCardDisplay('banker-card-display', bankerCards); // Update UI
+
+            bankerScore += bankerCardValue.value;
+            document.getElementById('banker-score').textContent = bankerScore;
+
+            if (bankerScore > 21 && !gameOver) {
+              coins += currentBet * 2;
+              endGame("🎉 Banker busted! You win!", currentBet * 2);
+            }
+          }
+        }, 300);
+      }
+
+      function endTurn() {
+        if (gameOver) return;
+
+        // Banker continues to draw until score is 20 or more, or busts
+        while (bankerScore < 20) {
+          const suit = suits[Math.floor(Math.random() * suits.length)];
+          const cardValue = values[Math.floor(Math.random() * values.length)];
+          bankerScore += cardValue.value;
+          const cardFace = `${cardValue.face}${suit}`; // Changed order
+
+          bankerCards.push(cardFace); // Add card to array
+          updateCardDisplay('banker-card-display', bankerCards); // Update UI
+
+          document.getElementById('banker-score').textContent = bankerScore;
+
+          if (bankerScore > 21) {
+            coins += currentBet * 2;
+            endGame("🎉 Banker busted! You win!", currentBet * 2);
+            return;
+          }
+        }
+
+        let winAmount = 0;
+        let result = "";
+        if (playerScore > 21) {
+          result = "😢 You busted! Banker wins.";
+        } else if (bankerScore >= playerScore) {
+          result = "🏦 Banker wins.";
+        } else {
+          result = "🎉 You win!";
+          winAmount = currentBet * 2;
+          coins += winAmount;
+        }
+
+        endGame(result, winAmount);
+      }
+
+      function endGame(message, winAmount) {
+        document.getElementById('result').textContent = message;
+        document.getElementById('win-amount').textContent = winAmount;
+        saveBalance();
+        document.getElementById('coins').textContent = coins;
+        gameOver = true;
+      }
+
+      function saveBalance() {
+        if (currentUser) {
+          localStorage.setItem(`balance_${currentUser}`, coins);
+          localStorage.setItem("balance", coins); // sync for Game Hub
+        } else {
+          console.warn("No user logged in. Balance not saved.");
+        }
+      }
+    </script>
+  </div>
+</body>
+</html>

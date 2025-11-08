@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎯 Plinko Nexus</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap');
+
+    :root {
+      --primary-color: #00ffff; /* Cyan */
+      --secondary-color: #ff00ff; /* Magenta */
+      --accent-color: #00ff88; /* Green for win */
+      --danger-color: #ff4d4d; /* Red for loss/error */
+      --bg-dark: #0a011b;
+      --bg-medium: #1c0333;
+      --bg-light: #2d054a;
+      --border-glow: 0 0 15px var(--primary-color), 0 0 25px rgba(0, 255, 255, 0.5);
+      --text-glow-primary: 0 0 10px var(--primary-color);
+      --text-glow-secondary: 0 0 10px var(--secondary-color);
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #000000 100%);
+      color: #e0e0e0;
+      text-align: center;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: var(--bg-medium);
+      border: 2px solid var(--secondary-color);
+      border-radius: 25px;
+      box-shadow: 0 0 40px rgba(255, 0, 255, 0.6), 0 0 80px rgba(0, 255, 255, 0.2);
+      padding: 30px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary-color);
+      text-shadow: var(--border-glow);
+      margin-bottom: 20px;
+      font-size: 3em;
+      letter-spacing: 3px;
+    }
+    .balance-section {
+      font-size: 1.5em;
+      margin-bottom: 25px;
+      color: var(--accent-color);
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px var(--accent-color);
+    }
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    input[type="number"] {
+      padding: 12px;
+      font-size: 1.1em;
+      width: 180px;
+      border-radius: 10px;
+      border: 2px solid var(--secondary-color);
+      background-color: var(--bg-light);
+      color: #e0e0e0;
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    input[type="number"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 10px rgba(0, 255, 255, 0.3);
+      outline: none;
+    }
+    .drop-button {
+      padding: 14px 30px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      border: none;
+      background-color: var(--primary-color);
+      color: var(--bg-dark);
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px var(--primary-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .drop-button:hover {
+      background-color: #00e6e6;
+      box-shadow: 0 0 25px var(--primary-color), 0 0 35px var(--primary-color);
+      transform: translateY(-2px);
+    }
+    .drop-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    .drop-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: all 0.7s;
+    }
+    .drop-button:not(:disabled):hover::before {
+      left: 100%;
+    }
+
+    .board {
+      position: relative;
+      width: 100%;
+      height: 400px; /* Increased height for more rows */
+      margin: 30px auto;
+      background: radial-gradient(circle at center, #110224 0%, #0a011b 100%);
+      border-radius: 15px;
+      box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.2), 0 0 30px rgba(255, 0, 255, 0.4);
+      overflow: hidden;
+      border: 1px solid var(--secondary-color);
+    }
+    .slot {
+      position: absolute;
+      bottom: 0;
+      /* Adjusted width based on the new 11 slots */
+      width: calc(100% / 11); 
+      height: 70px;
+      background: linear-gradient(to top, #00ffff50, #00ffff20);
+      color: #e0e0e0;
+      font-weight: bold;
+      line-height: 70px;
+      border-top: 2px solid var(--primary-color);
+      border-left: 1px solid rgba(0, 255, 255, 0.3);
+      border-right: 1px solid rgba(0, 255, 255, 0.3);
+      font-size: 1.1em;
+      text-shadow: 0 0 8px var(--primary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    .slot:first-child { border-left: none; }
+    .slot:last-child { border-right: none; }
+
+    /* Slot Multiplier Colors based on the provided image's colors */
+    .slot.x0 { background: linear-gradient(to top, #ff4d4d80, #ff4d4d40); border-top-color: #ff4d4d; text-shadow: 0 0 10px #ff4d4d; } /* Red for 0, 110 */
+    .slot.x0-5 { background: linear-gradient(to top, #ff8c0080, #ff8c0040); border-top-color: #ff8c00; text-shadow: 0 0 10px #ff8c00; } /* Orange for 0.5, 1.5 */
+    .slot.x1 { background: linear-gradient(to top, #ffd70080, #ffd70040); border-top-color: #ffd700; text-shadow: 0 0 10px #ffd700; } /* Yellow for 1 */
+    .slot.x1-5 { background: linear-gradient(to top, #ff8c0080, #ff8c0040); border-top-color: #ff8c00; text-shadow: 0 0 10px #ff8c00; } /* Orange for 0.5, 1.5 */
+    .slot.x3 { background: linear-gradient(to top, #00bfff80, #00bfff40); border-top-color: #00bfff; text-shadow: 0 0 10px #00bfff; } /* Light Blue for 3 */
+    .slot.x5 { background: linear-gradient(to top, #00ff8880, #00ff8840); border-top-color: #00ff88; text-shadow: 0 0 10px #00ff88; } /* Green for 5 */
+    .slot.x10 { background: linear-gradient(to top, #8a2be280, #8a2be240); border-top-color: #8a2be2; text-shadow: 0 0 10px #8a2be2; } /* Purple for 10 */
+    .slot.x41 { background: linear-gradient(to top, #8a2be280, #8a2be240); border-top-color: #8a2be2; text-shadow: 0 0 10px #8a2be2; } /* Purple for 41 */
+
+
+    .chip {
+      position: absolute;
+      width: 15px; /* Significantly smaller chip size */
+      height: 15px; /* Significantly smaller chip size */
+      background: radial-gradient(circle at center, #ffffff, var(--primary-color));
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--primary-color), 0 0 15px rgba(0, 255, 255, 0.6);
+      z-index: 10;
+      transform: translate(-50%, -50%);
+      animation: chipPulse 1s infinite alternate;
+    }
+    @keyframes chipPulse {
+      from { box-shadow: 0 0 6px var(--primary-color), 0 0 10px rgba(0, 255, 255, 0.4); }
+      to { box-shadow: 0 0 10px var(--primary-color), 0 0 18px rgba(0, 255, 255, 0.8); }
+    }
+    .chip.landing {
+        transition: left 0.3s ease-out, top 0.3s ease-out, transform 0.3s ease-out !important;
+    }
+
+    .peg {
+      position: absolute;
+      width: 8px; /* Pegs remain at this size */
+      height: 8px; /* Pegs remain at this size */
+      background: var(--secondary-color);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--secondary-color); 
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+    }
+    .peg.hit {
+        transform: translate(-50%, -50%) scale(1.8); 
+        box-shadow: 0 0 12px var(--primary-color), 0 0 20px var(--primary-color); 
+    }
+
+    .result-message {
+      font-size: 1.6em;
+      margin-top: 30px;
+      font-weight: bold;
+      min-height: 1.6em;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    .result-message.win {
+      color: var(--accent-color);
+      text-shadow: 0 0 15px var(--accent-color), 0 0 25px rgba(0, 255, 136, 0.5);
+    }
+    .result-message.lose {
+      color: var(--danger-color);
+      text-shadow: 0 0 15px var(--danger-color), 0 0 25px rgba(255, 77, 77, 0.5);
+    }
+    .result-message.info {
+      color: var(--primary-color);
+      text-shadow: 0 0 15px var(--primary-color), 0 0 25px rgba(0, 255, 255, 0.5);
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      padding: 8px 15px;
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .back-button:hover {
+      background-color: var(--primary-color);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 PLINKO NEXUS</h1>
+    <p class="balance-section">💰 BALANCE: ₱<span id="coins">0</span></p>
+
+    <div class="input-group">
+      <input type="number" id="bet-amount" placeholder="BET (₱10–₱500)" min="10" max="500" value="50" />
+      <button class="drop-button" id="dropButton" onclick="dropChip()">🪙 DROP CHIP</button>
+    </div>
+
+    <div class="board" id="board">
+      <!-- Slots - Adjusted to 11 slots -->
+      <div class="slot" data-multiplier="0" style="left:0%;"></div>
+      <div class="slot" data-multiplier="0.5" style="left:9.09%;"></div>
+      <div class="slot" data-multiplier="1" style="left:18.18%;"></div>
+      <div class="slot" data-multiplier="1.5" style="left:27.27%;"></div>
+      <div class="slot" data-multiplier="3" style="left:36.36%;"></div>
+      <div class="slot" data-multiplier="5" style="left:45.45%;"></div>
+      <div class="slot" data-multiplier="3" style="left:54.54%;"></div>
+      <div class="slot" data-multiplier="1.5" style="left:63.63%;"></div>
+      <div class="slot" data-multiplier="1" style="left:72.72%;"></div>
+      <div class="slot" data-multiplier="0.5" style="left:81.81%;"></div>
+      <div class="slot" data-multiplier="0" style="left:90.9%;"></div>
+      
+    </div>
+
+    <p id="result" class="result-message"></p>
+    <a href="index.html" class="back-button">⬅ BACK TO MENU</a>
+  </div>
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    let coins = parseInt(localStorage.getItem(`balance_${currentUser}`)) || 0;
+    let activeChips = 0; 
+
+    const dropButton = document.getElementById("dropButton");
+    const betAmountInput = document.getElementById("bet-amount");
+    const board = document.getElementById("board");
+    const resultEl = document.getElementById("result");
+    const coinsDisplay = document.getElementById("coins");
+
+    // Physics constants - TUNED FOR A MORE NATURAL FEEL WITH GOOD SPREAD
+    const GRAVITY = 0.35; 
+    const DRAG = 0.97; 
+    const ELASTICITY = 0.8; 
+    const HORIZONTAL_RANDOMNESS_INITIAL = 15; 
+    const HORIZONTAL_RANDOMNESS_COLLISION = 6; 
+
+    const numRows = 14; 
+    const pegRadius = 4; // Peg radius (8px width/height in CSS)
+    const chipRadius = 7.5; // NEW: Smaller chip radius (15px width/height in CSS)
+    const collisionDistance = pegRadius + chipRadius; 
+
+    // Adjusted multipliers for 11 slots
+    const slotMultipliers = [0, 0.5, 1, 1.5, 3, 5, 3, 1.5, 1, 0.5, 0];
+    const numSlots = slotMultipliers.length;
+
+
+    let pegPositions = [];
+
+    // Utility functions
+    function updateBalanceDisplay() {
+      coinsDisplay.textContent = coins.toLocaleString();
+      localStorage.setItem(`balance_${currentUser}`, coins);
+    }
+
+    function displayMessage(message, type = 'info') {
+      if (activeChips === 0 || type !== 'info') { 
+        resultEl.textContent = message;
+        resultEl.className = `result-message ${type}`;
+      }
+    }
+
+    function disableGameControls(disabled) {
+        betAmountInput.disabled = disabled;
+    }
+
+    // Generate pegs to match the image's triangular layout
+    function generatePegs() {
+      document.querySelectorAll('.peg').forEach(peg => peg.remove());
+      pegPositions = [];
+
+      const boardWidth = board.clientWidth;
+      const playableBoardHeight = board.clientHeight - 70; 
+
+      const widestRowPegs = numRows; 
+      const horizontalSpacing = (boardWidth * 0.95) / (widestRowPegs - 1); 
+
+      const verticalSpacing = playableBoardHeight / (numRows + 1);
+
+      for (let row = 0; row < numRows; row++) {
+        const numPegsInThisRow = row + 1; 
+
+        const rowOccupiedWidth = (numPegsInThisRow - 1) * horizontalSpacing;
+
+        const startXOffset = (boardWidth - rowOccupiedWidth) / 2;
+
+        const yOffset = verticalSpacing * (row + 1);
+
+        for (let i = 0; i < numPegsInThisRow; i++) {
+          const peg = document.createElement('div');
+          peg.className = 'peg';
+
+          const currentPegX = startXOffset + i * horizontalSpacing;
+
+          peg.style.top = `${yOffset}px`;
+          peg.style.left = `${currentPegX}px`;
+
+          board.appendChild(peg);
+          pegPositions.push({ x: currentPegX, y: yOffset, element: peg });
+        }
+      }
+    }
+
+    // Drop chip function
+    function dropChip() {
+      const bet = parseInt(betAmountInput.value);
+      if (isNaN(bet) || bet < 10 || bet > 500) {
+        displayMessage("❗ Enter a valid bet (₱10–₱500).", "lose");
+        return;
+      }
+      if (coins < bet) {
+        displayMessage("💸 Insufficient balance to drop chip.", "lose");
+        return;
+      }
+
+      activeChips++;
+      coins -= bet;
+      updateBalanceDisplay();
+      displayMessage("Chip falling...", "info");
+
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+
+      // Start position: centered over the top peg, slightly above
+      let chipX = pegPositions[0].x; 
+      let chipY = pegPositions[0].y - chipRadius - 10; 
+      let chipVx = (Math.random() - 0.5) * HORIZONTAL_RANDOMNESS_INITIAL; 
+      let chipVy = 0;
+
+      let lastPegHit = null;
+      let animationFrameId; 
+
+      board.appendChild(chip);
+
+      function animateChip() {
+        // Physics
+        chipVy += GRAVITY;
+        chipVx *= DRAG;
+        chipVy *= DRAG;
+
+        chipX += chipVx;
+        chipY += chipVy;
+
+        // Wall collisions
+        if (chipX - chipRadius < 0) {
+          chipX = chipRadius;
+          chipVx = -chipVx * ELASTICITY * 0.9; 
+        } else if (chipX + chipRadius > board.clientWidth) {
+          chipX = board.clientWidth - chipRadius;
+          chipVx = -chipVx * ELASTICITY * 0.9; 
+        }
+
+        // Peg collision detection
+        for (const peg of pegPositions) {
+          const dx = chipX - peg.x;
+          const dy = chipY - peg.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < collisionDistance) {
+            if (peg.element !== lastPegHit || (lastPegHit === peg.element && dist < collisionDistance - 2)) {
+                lastPegHit = peg.element;
+
+                const normalX = dx / dist;
+                const normalY = dy / dist;
+
+                const dotProduct = chipVx * normalX + chipVy * normalY;
+
+                chipVx = (chipVx - 2 * dotProduct * normalX) * ELASTICITY;
+                chipVy = (chipVy - 2 * dotProduct * normalY) * ELASTICITY;
+
+                chipVx += (Math.random() - 0.5) * HORIZONTAL_RANDOMNESS_COLLISION * 2;
+
+                const overlap = collisionDistance - dist;
+                chipX += normalX * overlap;
+                chipY += normalY * overlap;
+
+                peg.element.classList.add('hit');
+                setTimeout(() => peg.element.classList.remove('hit'), 100);
+            }
+          } else if (peg.element === lastPegHit && dist > collisionDistance + 5) {
+            lastPegHit = null;
+          }
+        }
+
+        // Update position
+        chip.style.left = `${chipX}px`;
+        chip.style.top = `${chipY}px`;
+
+        // Check landing
+        if (chipY + chipRadius >= board.clientHeight - 70) {
+          cancelAnimationFrame(animationFrameId); 
+
+          const constrainedChipX = Math.max(0, Math.min(chipX, board.clientWidth));
+          const finalSlotIndex = Math.floor(constrainedChipX / (board.clientWidth / numSlots));
+          const adjustedSlotIndex = Math.max(0, Math.min(finalSlotIndex, numSlots - 1));
+
+          const slotWidth = board.clientWidth / numSlots;
+          const targetX = (adjustedSlotIndex * slotWidth) + (slotWidth / 2);
+
+          chip.classList.add('landing');
+          chip.style.left = `${targetX}px`;
+          chip.style.top = `${board.clientHeight - chipRadius - 5}px`;
+
+          setTimeout(() => {
+            const multiplier = slotMultipliers[adjustedSlotIndex];
+            const winnings = Math.round(bet * multiplier);
+
+            coins += winnings;
+            updateBalanceDisplay();
+
+            let messageText = `🎉 Chip landed in ×${multiplier} — You WON ₱${winnings.toLocaleString()}!`;
+            let messageType = 'win';
+            if (winnings === 0) {
+              messageText = `😔 Chip landed in ×${multiplier} — You LOST ₱${bet.toLocaleString()}.`;
+              messageType = 'lose';
+            } else if (winnings < bet) {
+              messageText = `💸 Chip landed in ×${multiplier} — You got ₱${winnings.toLocaleString()} (lost ₱${(bet - winnings).toLocaleString()}).`;
+              messageType = 'lose';
+            }
+            
+            if (activeChips === 1 || multiplier >= 3 || multiplier === 0) {
+                 displayMessage(messageText, messageType);
+            }
+
+            setTimeout(() => {
+              chip.remove();
+              activeChips--;
+              if (activeChips === 0) {
+                if (!resultEl.classList.contains('win') && !resultEl.classList.contains('lose')) {
+                    displayMessage("", "info"); 
+                }
+                disableGameControls(false); 
+              }
+            }, 1500);
+          }, 300); 
+        } else {
+          animationFrameId = requestAnimationFrame(animateChip);
+        }
+      }
+      animationFrameId = requestAnimationFrame(animateChip); 
+    }
+
+    // Initialization
+    window.onload = function() {
+      if (!currentUser) {
+        displayMessage("No user logged in. Redirecting to menu...", "lose");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+        return;
+      }
+      if (isNaN(coins) || coins === null || coins <= 0) {
+        coins = 1000;
+        updateBalanceDisplay();
+        displayMessage("Welcome to Plinko Nexus! Your balance has been set to ₱1000.", "info");
+      } else {
+        updateBalanceDisplay();
+      }
+      generatePegs();
+
+      const slotElements = document.querySelectorAll('.slot');
+      slotElements.forEach((slot, index) => {
+        const multiplierValue = slotMultipliers[index];
+        slot.textContent = `×${multiplierValue}`;
+        slot.className = `slot x${multiplierValue.toString().replace('.', '-')}`;
+      });
+      disableGameControls(false); 
+    };
+
+    window.onresize = generatePegs; 
+  </script>
+</body>
+</html>

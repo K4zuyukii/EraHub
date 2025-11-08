@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #1a1a2e;
+      --bg-card: #22253b;
+      --text-light: #e0e0e0;
+      --primary-color: #0f4c75;
+      --accent-color: #3282b8;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --shadow-light: rgba(0, 0, 0, 0.3);
+      --border-radius: 10px;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #0c0c1a 100%);
+      color: var(--text-light);
+      text-align: center;
+      padding: 40px 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      box-sizing: border-box;
+    }
+
+    .dashboard-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      background-color: var(--bg-card);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 30px var(--shadow-light);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    h1 {
+      grid-column: 1 / -1;
+      color: var(--accent-color);
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px var(--primary-color);
+    }
+
+    .header-info {
+      grid-column: 1 / -1;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+      color: var(--text-light);
+    }
+
+    .card {
+      background-color: #2a2d48;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px var(--shadow-light);
+      text-align: left;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      color: var(--accent-color);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      display: flex;
+      align-items: center;
+    }
+
+    .card h2 i {
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    li {
+      background-color: #363952;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-left: 5px solid var(--primary-color);
+    }
+
+    li strong {
+      color: var(--accent-color);
+    }
+
+    li button {
+      margin-right: 10px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-size: 0.9em;
+    }
+
+    li button i {
+      margin-right: 5px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      border: none;
+      margin: 8px 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button i {
+      margin-right: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: #333;
+    }
+    .btn-warning:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: calc(100% - 24px);
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: var(--text-light);
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    #strength-indicator {
+      margin-top: 10px;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .weak {
+      color: var(--danger-color);
+      background-color: rgba(220, 53, 69, 0.2);
+    }
+    .medium {
+      color: var(--warning-color);
+      background-color: rgba(255, 193, 7, 0.2);
+    }
+    .strong {
+      color: var(--success-color);
+      background-color: rgba(40, 167, 69, 0.2);
+    }
+
+    .full-width-section {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .logout-button {
+        background-color: var(--danger-color);
+        color: white;
+        padding: 15px 30px;
+        font-size: 1.1em;
+        border-radius: var(--border-radius);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    .logout-button:hover {
+        background-color: #c82333;
+        transform: scale(1.03);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #333;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 20px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+      .card h2 {
+        font-size: 1.5em;
+      }
+      li {
+        padding: 12px;
+      }
+      button {
+        width: 100%;
+        margin: 8px 0;
+      }
+      input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+    <p class="header-info">Logged in as: <strong id="admin-user">admin</strong></p>
+
+    <div class="card">
+      <h2><i class="fas fa-users"></i> Registered Users & Balances</h2>
+      <ul id="user-list"></ul>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-money-check-alt"></i> Deposit Requests</h2>
+      <ul id="request-list"></ul>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-hand-holding-usd"></i> Withdrawal Requests</h2>
+      <ul id="withdraw-list"></ul>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-user-cog"></i> Manage Users</h2>
+      <div class="form-group">
+        <input type="text" id="target-user" placeholder="Username" />
+        <input type="number" id="manual-amount" placeholder="Amount to Add" />
+      </div>
+      <button class="btn-primary" onclick="addBalance()"><i class="fas fa-plus"></i> Add Balance</button>
+      <button class="btn-warning" onclick="resetBalance()"><i class="fas fa-redo"></i> Reset Balance</button>
+      <button class="btn-danger" onclick="deleteUser()"><i class="fas fa-trash-alt"></i> Delete User</button>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-key"></i> Change User Password</h2>
+      <div class="form-group">
+        <input type="text" id="password-user" placeholder="Username" />
+        <input type="text" id="new-password" placeholder="New Password" oninput="checkStrength()" />
+        <p id="strength-indicator"></p>
+      </div>
+      <button class="btn-primary" onclick="changePassword()"><i class="fas fa-lock"></i> Change Password</button>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-file-export"></i> Export Logs</h2>
+      <p>Download all transaction logs for review.</p>
+      <button class="btn-primary" onclick="exportLogs()"><i class="fas fa-download"></i> Download Transactions</button>
+    </div>
+
+    <div class="full-width-section">
+      <button class="logout-button" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser !== "admin") {
+      alert("Access denied. Admin only.");
+      window.location.href = "wallet.html";
+    }
+
+    function listUsers() {
+      const userList = document.getElementById("user-list");
+      userList.innerHTML = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("user_") && key !== "user_admin") { // Exclude admin from regular user list
+          const username = key.replace("user_", "");
+          const balance = localStorage.getItem(`balance_${username}`) || "0";
+          const li = document.createElement("li");
+          li.textContent = `${username}: ₱${balance}`;
+          userList.appendChild(li);
+        }
+      }
+      if (userList.children.length === 0) {
+        userList.innerHTML = "<li>No registered users (excluding admin).</li>";
+      }
+    }
+
+    function listDepositRequests() {
+      const requestList = document.getElementById("request-list");
+      requestList.innerHTML = "";
+      const requests = JSON.parse(localStorage.getItem("depositRequests") || "[]");
+      if (requests.length === 0) {
+        requestList.innerHTML = "<li>No pending deposit requests.</li>";
+        return;
+      }
+      requests.forEach((req, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${req.username}</strong> requested ₱${req.amount}<br>
+          Ref: ${req.refCode}<br>
+          Time: ${new Date(req.timestamp).toLocaleString()}<br>
+          <button class="btn-success" onclick="approveRequest(${index})"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-danger" onclick="rejectRequest(${index})"><i class="fas fa-times"></i> Reject</button>
+        `;
+        requestList.appendChild(li);
+      });
+    }
+
+    function approveRequest(index) {
+      const requests = JSON.parse(localStorage.getItem("depositRequests") || "[]");
+      const req = requests[index];
+      const current = parseInt(localStorage.getItem(`balance_${req.username}`) || "0");
+      const updated = current + req.amount;
+      localStorage.setItem(`balance_${req.username}`, updated);
+      // Removed localStorage.setItem("balance", updated); as it's for the logged-in user, not general admin
+      requests.splice(index, 1);
+      localStorage.setItem("depositRequests", JSON.stringify(requests));
+      listDepositRequests();
+      listUsers();
+      alert(`₱${req.amount} added to ${req.username}`);
+    }
+
+    function rejectRequest(index) {
+      const requests = JSON.parse(localStorage.getItem("depositRequests") || "[]");
+      requests.splice(index, 1);
+      localStorage.setItem("depositRequests", JSON.stringify(requests));
+      listDepositRequests();
+      alert("Deposit request rejected.");
+    }
+
+    function listWithdrawRequests() {
+      const withdrawList = document.getElementById("withdraw-list");
+      withdrawList.innerHTML = "";
+      const requests = JSON.parse(localStorage.getItem("withdrawRequests") || "[]");
+      if (requests.length === 0) {
+        withdrawList.innerHTML = "<li>No pending withdrawal requests.</li>";
+        return;
+      }
+      requests.forEach((req, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${req.username}</strong> requested ₱${req.amount}<br>
+          Method: ${req.method}<br>
+          Account: ${req.account}<br>
+          Time: ${new Date(req.timestamp).toLocaleString()}<br>
+          <button class="btn-success" onclick="approveWithdraw(${index})"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-danger" onclick="rejectWithdraw(${index})"><i class="fas fa-times"></i> Reject</button>
+        `;
+        withdrawList.appendChild(li);
+      });
+    }
+
+    function approveWithdraw(index) {
+      const requests = JSON.parse(localStorage.getItem("withdrawRequests") || "[]");
+      requests.splice(index, 1);
+      localStorage.setItem("withdrawRequests", JSON.stringify(requests));
+      listWithdrawRequests();
+      alert("Withdrawal approved.");
+    }
+
+    function rejectWithdraw(index) {
+      const requests = JSON.parse(localStorage.getItem("withdrawRequests") || "[]");
+      const req = requests[index];
+      const current = parseInt(localStorage.getItem(`balance_${req.username}`) || "0");
+      const refunded = current + req.amount;
+      localStorage.setItem(`balance_${req.username}`, refunded);
+      // Removed localStorage.setItem("balance", refunded); as it's for the logged-in user, not general admin
+      requests.splice(index, 1);
+      localStorage.setItem("withdrawRequests", JSON.stringify(requests));
+      listWithdrawRequests();
+      listUsers();
+      alert(`Withdrawal rejected. ₱${req.amount} refunded to ${req.username}`);
+    }
+
+    function addBalance() {
+      const user = document.getElementById("target-user").value.trim();
+      const amount = parseInt(document.getElementById("manual-amount").value);
+      if (!user || isNaN(amount) || amount <= 0) {
+        alert("Enter valid username and amount (must be positive).");
+        return;
+      }
+      if (!localStorage.getItem(`user_${user}`)) {
+          alert("User not found.");
+          return;
+      }
+
+      const current = parseInt(localStorage.getItem(`balance_${user}`) || "0");
+      const updated = current + amount;
+      localStorage.setItem(`balance_${user}`, updated);
+      // Removed localStorage.setItem("balance", updated);
+      listUsers();
+      alert(`₱${amount} added to ${user}'s balance.`);
+      document.getElementById("target-user").value = "";
+      document.getElementById("manual-amount").value = "";
+    }
+
+    function resetBalance() {
+      const user = document.getElementById("target-user").value.trim();
+      if (!user) {
+        alert("Enter username.");
+        return;
+      }
+      if (!localStorage.getItem(`user_${user}`)) {
+          alert("User not found.");
+          return;
+      }
+      localStorage.setItem(`balance_${user}`, "0");
+      // Removed localStorage.setItem("balance", "0");
+      listUsers();
+      alert(`${user}'s balance reset to ₱0`);
+      document.getElementById("target-user").value = "";
+      document.getElementById("manual-amount").value = "";
+    }
+
+    function deleteUser() {
+      const user = document.getElementById("target-user").value.trim();
+      if (!user) {
+        alert("Enter username.");
+        return;
+      }
+      if (user === "admin") {
+        alert("Cannot delete the admin account.");
+        return;
+      }
+      if (!localStorage.getItem(`user_${user}`)) {
+          alert("User not found.");
+          return;
+      }
+      if (confirm(`Are you sure you want to delete user ${user}? This action cannot be undone.`)) {
+          localStorage.removeItem(`user_${user}`);
+          localStorage.removeItem(`balance_${user}`);
+          listUsers();
+          alert(`${user} deleted successfully.`);
+          document.getElementById("target-user").value = "";
+      }
+    }
+
+    function changePassword() {
+      const user = document.getElementById("password-user").value.trim();
+      const newPass = document.getElementById("new-password").value;
+
+      if (!user || !newPass) {
+        alert("Enter both username and new password.");
+        return;
+      }
+
+      if (!localStorage.getItem(`user_${user}`)) {
+        alert("User not found.");
+        return;
+      }
+
+      localStorage.setItem(`user_${user}`, newPass);
+      alert(`Password for ${user} has been updated.`);
+      document.getElementById("password-user").value = "";
+      document.getElementById("new-password").value = "";
+      document.getElementById("strength-indicator").textContent = "";
+      document.getElementById("strength-indicator").className = "";
+    }
+
+    function checkStrength() {
+      const password = document.getElementById("new-password").value;
+      const indicator = document.getElementById("strength-indicator");
+
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+      if (password.length === 0) {
+        indicator.textContent = "";
+        indicator.className = "";
+      } else if (strength <= 1) {
+        indicator.textContent = "Weak password";
+        indicator.className = "weak";
+      } else if (strength === 2 || strength === 3) {
+        indicator.textContent = "Medium strength";
+        indicator.className = "medium";
+      } else {
+        indicator.textContent = "Strong password";
+        indicator.className = "strong";
+      }
+    }
+
+    function exportLogs() {
+      const deposits = JSON.parse(localStorage.getItem("depositRequests") || "[]");
+      const withdrawals = JSON.parse(localStorage.getItem("withdrawRequests") || "[]");
+
+      const log = {
+        exportedAt: new Date().toISOString(),
+        deposits,
+        withdrawals,
+        users: {}
+      };
+
+      // Include all user data (username and balance, not password)
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("user_")) {
+          const username = key.replace("user_", "");
+          log.users[username] = {
+            balance: localStorage.getItem(`balance_${username}`) || "0"
+          };
+        }
+      }
+
+      const blob = new Blob([JSON.stringify(log, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `wallet_admin_logs_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert("Transaction logs downloaded successfully!");
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "wallet.html";
+    }
+
+    // Initialize dashboard
+    listUsers();
+    listDepositRequests();
+    listWithdrawRequests();
+  </script>
+</body>
+</html>

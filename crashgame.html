@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 AstroCrash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00ffff; /* Cyan */
+      --secondary-color: #ff00ff; /* Magenta */
+      --accent-color: #00ff88; /* Green for win */
+      --danger-color: #ff4d4d; /* Red for loss/crash */
+      --bg-dark: #0a011b;
+      --bg-medium: #1c0333;
+      --bg-light: #2d054a;
+      --border-glow: 0 0 15px var(--primary-color), 0 0 25px rgba(0, 255, 255, 0.5);
+      --text-glow-primary: 0 0 10px var(--primary-color);
+      --text-glow-secondary: 0 0 10px var(--secondary-color);
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #000000 100%);
+      color: #e0e0e0;
+      text-align: center;
+      padding: 20px;
+      min-height: 10vh; /* Reduced height for better visibility of content on smaller screens */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto; /* Allow scrolling if content is taller than viewport */
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://source.unsplash.com/random/1920x1080/?outer-space,galaxy,nebula') no-repeat center center/cover;
+      filter: blur(5px) brightness(0.3);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      background: var(--bg-medium);
+      border: 2px solid var(--secondary-color);
+      border-radius: 25px;
+      box-shadow: 0 0 40px rgba(255, 0, 255, 0.6), 0 0 80px rgba(0, 255, 255, 0.2);
+      padding: 30px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary-color);
+      text-shadow: var(--border-glow);
+      margin-bottom: 20px;
+      font-size: 3.5em;
+      letter-spacing: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    h1::before, h1::after {
+      content: '🚀';
+      font-size: 0.8em;
+      animation: rocketFly 2s infinite alternate ease-in-out;
+    }
+    h1::after {
+      transform: scaleX(-1);
+    }
+    @keyframes rocketFly {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+
+    .balance {
+      font-size: 1.4em;
+      margin-bottom: 25px;
+      color: var(--accent-color);
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px var(--accent-color);
+    }
+    .input-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    input[type="number"] {
+      padding: 12px;
+      font-size: 1.1em;
+      width: 160px;
+      border-radius: 10px;
+      border: 2px solid var(--secondary-color);
+      background-color: var(--bg-light);
+      color: #e0e0e0;
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    input[type="number"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 10px rgba(0, 255, 255, 0.3);
+      outline: none;
+    }
+    .game-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .action-button {
+      padding: 14px 30px;
+      font-size: 1.3em;
+      border-radius: 10px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .action-button.start {
+      background-color: var(--primary-color);
+      color: var(--bg-dark);
+      box-shadow: 0 0 15px var(--primary-color);
+    }
+    .action-button.cashout {
+      background-color: var(--accent-color);
+      color: var(--bg-dark);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+    .action-button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      filter: brightness(1.2);
+    }
+    .action-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: all 0.7s;
+    }
+    .action-button:not(:disabled):hover::before {
+      left: 100%;
+    }
+
+    .multiplier {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5em;
+      margin: 30px 0;
+      color: var(--primary-color);
+      text-shadow: var(--border-glow);
+      min-height: 1.2em; /* Ensure space for multiplier */
+    }
+    .multiplier.crashed {
+      color: var(--danger-color);
+      text-shadow: 0 0 20px var(--danger-color), 0 0 30px rgba(255, 77, 77, 0.7);
+    }
+
+    canvas {
+      border: 2px solid var(--primary-color);
+      background-color: #000000;
+      margin: 20px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+    /* Add red glow for crashed state on canvas border */
+    canvas.crashed-border {
+      border-color: var(--danger-color);
+      box-shadow: 0 0 20px rgba(255, 77, 77, 0.7);
+    }
+
+    .result {
+      font-size: 1.3em;
+      margin: 15px 0;
+      font-weight: bold;
+      min-height: 1.3em; /* Ensure space for result messages */
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    .result.win {
+      color: var(--accent-color);
+      text-shadow: 0 0 15px var(--accent-color), 0 0 25px rgba(0, 255, 136, 0.5);
+    }
+    .result.lose {
+      color: var(--danger-color);
+      text-shadow: 0 0 15px var(--danger-color), 0 0 25px rgba(255, 77, 77, 0.5);
+    }
+    .result.info {
+      color: var(--primary-color);
+      text-shadow: 0 0 15px var(--primary-color), 0 0 25px rgba(0, 255, 255, 0.5);
+    }
+
+    .explosion {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, #ffaaaa 0%, #ff4444 70%, transparent 100%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: explode 0.6s ease-out forwards;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+    @keyframes explode {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.1); }
+      80% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      padding: 8px 15px;
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .back-button:hover {
+      background-color: var(--primary-color);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .history-box {
+      max-width: 700px;
+      margin: 30px auto 0;
+      background-color: var(--bg-medium);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.4), 0 0 50px rgba(0, 255, 255, 0.1);
+      z-index: 10;
+      display: block;
+    }
+    .history-box h3 {
+      margin-bottom: 15px;
+      color: var(--secondary-color);
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: var(--text-glow-secondary);
+      font-size: 1.5em;
+      letter-spacing: 1px;
+    }
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .history-item {
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 1em;
+      font-weight: bold;
+      color: var(--bg-dark);
+      background-color: #555; /* Default for low values */
+      box-shadow: 0 0 5px rgba(255,255,255,0.2);
+    }
+    .history-item.low { background-color: #ff4d4d; } /* < 2x */
+    .history-item.medium { background-color: #ffd700; } /* 2x - 5x */
+    .history-item.high { background-color: #00ff88; } /* > 5x */
+    .history-item.epic { background-color: #8a2be2; color: #fff; box-shadow: 0 0 10px #8a2be2; } /* > 10x */
+
+  </style>
+</head>
+<body>
+  <div class="container" id="game-container">
+    <h1>AstroCrash</h1>
+    <p class="balance">💰 BALANCE: ₱<span id="coins">1,000</span></p>
+
+    <div class="input-group">
+      <input type="number" id="bet-amount" placeholder="BET (₱10–₱500)" min="10" max="500" value="50" />
+      <input type="number" id="auto-cashout" placeholder="AUTO CASHOUT × (min 1.01)" min="1.01" step="0.01" value="2.00" />
+    </div>
+    
+    <div class="game-buttons">
+      <button class="action-button start" onclick="startCrash()" id="start-btn">START GAME</button>
+      <button class="action-button cashout" onclick="cashOut()" id="cashout-btn" disabled>CASHOUT</button>
+    </div>
+
+    <div class="multiplier" id="multiplier">1.00×</div>
+    <canvas id="curve" width="550" height="250"></canvas>
+    <p class="result info" id="result">Ready to launch!</p>
+    <p class="result info" id="last-crash">No recent crash data.</p>
+    <a href="index.html" class="back-button">⬅ BACK TO MENU</a>
+  </div>
+
+  <div class="history-box">
+    <h3>📊 LAST 10 CRASH POINTS</h3>
+    <div class="history-list" id="crash-history">
+      <!-- These will be dynamically populated by JS -->
+    </div>
+  </div>
+
+<script>
+  const currentUser = localStorage.getItem("currentUser") || "guest";
+  if (!localStorage.getItem(`balance_${currentUser}`)) {
+    localStorage.setItem(`balance_${currentUser}`, "1000"); // Ensure initial balance is 1000
+  }
+  let coins = parseInt(localStorage.getItem(`balance_${currentUser}`)) || 0;
+  document.getElementById("coins").textContent = coins.toLocaleString(); // Display balance from localStorage
+
+  let multiplier = 1.00; 
+  let crashPoint = 0; 
+  let interval = null;
+  let cashedOut = false;
+  let crashed = false; 
+  let bet = 50; 
+  let autoCashout = 2.00; 
+  let time = 0; 
+  
+  let crashHistory = JSON.parse(localStorage.getItem(`crashHistory_${currentUser}`)) || [];
+  if (crashHistory.length === 0) {
+    crashHistory = ["1.78", "5.70", "8.76", "3.28", "3.80", "1.12", "18.80", "15.26", "5.10", "3.10"];
+    localStorage.setItem(`crashHistory_${currentUser}`, JSON.stringify(crashHistory));
+  }
+
+
+  let gameRunning = false; 
+  const ctx = document.getElementById("curve").getContext("2d");
+  const canvas = document.getElementById("curve");
+
+  updateCrashHistoryDisplay();
+
+  function drawCurve() {
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)';
+    ctx.lineWidth = 0.5;
+    for(let i = 0; i < canvasWidth; i += 25) { 
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvasHeight);
+        ctx.stroke();
+    }
+    for(let i = 0; i < canvasHeight; i += 25) { 
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvasWidth, i);
+        ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(0, canvasHeight); 
+
+    const displayTime = time; 
+
+    for (let t = 0; t <= displayTime; t++) {
+      const currentMultiplier = Math.exp(t / 80); 
+      const y = canvasHeight - (Math.log(currentMultiplier) / Math.log(10)) * (canvasHeight / 2); 
+      const x = t * (canvasWidth / 200); 
+
+      ctx.lineTo(x, Math.max(5, y));
+    }
+    
+    ctx.strokeStyle = crashed ? "#ff4d4d" : var_primary_color; 
+    ctx.lineWidth = 4;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = ctx.strokeStyle;
+    ctx.stroke();
+    ctx.shadowBlur = 0; 
+
+    const currentMultForDot = multiplier; 
+    const dotY = canvasHeight - (Math.log(currentMultForDot) / Math.log(10)) * (canvas.height / 2);
+    const dotX = displayTime * (canvas.width / 200);
+    
+    if (dotX < canvasWidth && dotY > 0) {
+        ctx.beginPath();
+        ctx.arc(dotX, Math.max(5, dotY), 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#fff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+  }
+
+  function getCssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name);
+  }
+  const var_primary_color = getCssVar('--primary-color');
+
+
+  function showExplosion(x, y) {
+    const explosion = document.createElement("div");
+    explosion.className = "explosion";
+    explosion.style.left = `${x}px`;
+    explosion.style.top = `${y}px`;
+    document.getElementById("game-container").appendChild(explosion);
+    setTimeout(() => explosion.remove(), 600);
+  }
+
+  function riggedCrashPoint(betAmount, autoCashoutValue) {
+    const roll = Math.random();
+    let crashValue;
+
+    // Base probabilities for crash points
+    if (betAmount >= 200) { // High bet
+        if (roll < 0.55) crashValue = Math.random() * 1.3 + 1.0; // Increased chance of very low crash
+        else if (roll < 0.75) crashValue = Math.random() * 2.5 + 2.0; 
+        else if (roll < 0.90) crashValue = Math.random() * 4 + 4.5; 
+        else crashValue = Math.random() * 15 + 8.0; 
+    } else if (betAmount >= 50) { // Medium bet
+        if (roll < 0.45) crashValue = Math.random() * 1.5 + 1.0; 
+        else if (roll < 0.75) crashValue = Math.random() * 3 + 2.0; 
+        else if (roll < 0.90) crashValue = Math.random() * 6 + 5.0; 
+        else crashValue = Math.random() * 12 + 10.0; 
+    } else { // Low bet
+        if (roll < 0.40) crashValue = Math.random() * 1.8 + 1.0; 
+        else if (roll < 0.70) crashValue = Math.random() * 4 + 2.0; 
+        else if (roll < 0.85) crashValue = Math.random() * 8 + 6.0; 
+        else crashValue = Math.random() * 10 + 10.0; 
+    }
+
+    // Rigging around auto-cashout target - making it more likely to crash slightly before or after
+    const sensitivity = 0.08; // Increased sensitivity
+    if (crashValue > autoCashoutValue * (1 - sensitivity) && crashValue < autoCashoutValue * (1 + sensitivity)) {
+        if (Math.random() < 0.65) { // 65% chance to crash just below auto-cashout
+            crashValue = autoCashoutValue * (1 - (Math.random() * 0.1 + 0.02)); // Crash 2-12% below
+        } else { // 35% chance to crash just above auto-cashout (still allows wins)
+            crashValue = autoCashoutValue * (1 + (Math.random() * 0.1 + 0.02)); // Crash 2-12% above
+        }
+    }
+
+    // General increase in very low crash points
+    if (Math.random() < 0.20) { // 20% chance for crash between 1.01x and 1.5x
+        crashValue = Math.random() * 0.5 + 1.01; 
+    } else if (Math.random() < 0.38) { // Another 18% chance for crash between 1.01x and 1.8x
+        crashValue = Math.random() * 0.8 + 1.01; 
+    }
+
+    return Math.max(1.01, crashValue).toFixed(2);
+  }
+
+  function updateCrashHistoryDisplay() {
+    const historyList = document.getElementById("crash-history");
+    historyList.innerHTML = "";
+    if (crashHistory.length === 0) {
+        historyList.innerHTML = `<div class="history-item">None yet</div>`;
+        return;
+    }
+    crashHistory.slice(0, 10).forEach(p => { 
+      const item = document.createElement("div");
+      item.textContent = `${p}×`;
+      item.classList.add('history-item');
+      const point = parseFloat(p);
+      if (point < 2) item.classList.add('low');
+      else if (point >= 2 && point < 5) item.classList.add('medium');
+      else if (point >= 5 && point < 10) item.classList.add('high');
+      else item.classList.add('epic');
+      historyList.appendChild(item);
+    });
+  }
+
+  function addCrashToHistory(point) {
+    crashHistory.unshift(point);
+    if (crashHistory.length > 10) crashHistory.pop(); 
+    localStorage.setItem(`crashHistory_${currentUser}`, JSON.stringify(crashHistory));
+    updateCrashHistoryDisplay();
+  }
+
+  function startCrash() {
+    if (gameRunning) {
+      displayMessage("Game already running. Please wait for it to finish.", "info");
+      return;
+    }
+
+    bet = parseInt(document.getElementById("bet-amount").value);
+    autoCashout = parseFloat(document.getElementById("auto-cashout").value);
+
+    if (isNaN(bet) || bet < 10 || bet > 500) {
+      displayMessage("❗ Enter a valid bet (₱10–₱500).", "lose");
+      return;
+    }
+
+    if (isNaN(autoCashout) || autoCashout < 1.01) {
+      displayMessage("❗ Enter a valid auto cashout multiplier (min 1.01×).", "lose");
+      return;
+    }
+
+    if (coins < bet) {
+      displayMessage("💸 Insufficient balance to start game.", "lose");
+      return;
+    }
+
+    gameRunning = true;
+    coins -= bet;
+    localStorage.setItem(`balance_${currentUser}`, coins);
+    document.getElementById("coins").textContent = coins.toLocaleString();
+    document.getElementById("result").textContent = "";
+    document.getElementById("last-crash").textContent = "";
+    document.getElementById("cashout-btn").disabled = false;
+    document.getElementById("start-btn").disabled = true;
+    document.getElementById("bet-amount").disabled = true;
+    document.getElementById("auto-cashout").disabled = true;
+    document.getElementById("multiplier").classList.remove('crashed');
+    canvas.classList.remove('crashed-border');
+
+
+    multiplier = 1.00; 
+    cashedOut = false;
+    crashed = false;
+    time = 0;
+    crashPoint = parseFloat(riggedCrashPoint(bet, autoCashout)); 
+
+    document.getElementById("multiplier").textContent = `1.00×`;
+    displayMessage("🚀 Game started! Go for the stars!", "info");
+    drawCurve();
+
+    interval = setInterval(() => {
+      if (crashed) return;
+
+      time++;
+      multiplier = Math.exp(time / 80); 
+
+      document.getElementById("multiplier").textContent = `${multiplier.toFixed(2)}×`;
+      drawCurve();
+
+      if (!cashedOut && multiplier >= autoCashout) {
+        cashOut(); 
+      }
+
+      if (multiplier >= crashPoint) {
+        crashed = true;
+        clearInterval(interval);
+        document.getElementById("cashout-btn").disabled = true;
+        document.getElementById("start-btn").disabled = false;
+        document.getElementById("bet-amount").disabled = false;
+        document.getElementById("auto-cashout").disabled = false;
+        document.getElementById("multiplier").classList.add('crashed');
+        canvas.classList.add('crashed-border'); 
+
+        const canvasRect = canvas.getBoundingClientRect();
+        const currentMultForDot = Math.exp(time / 80);
+        const dotY = canvas.height - (Math.log(currentMultForDot) / Math.log(10)) * (canvas.height / 2);
+        const dotX = time * (canvas.width / 200);
+
+        const explosionX = canvasRect.left + dotX;
+        const explosionY = canvasRect.top + Math.max(5, dotY); 
+        showExplosion(explosionX, explosionY);
+
+        addCrashToHistory(crashPoint.toFixed(2));
+        document.getElementById("last-crash").textContent = `🕹️ LAST CRASH POINT: ${crashPoint.toFixed(2)}×`;
+
+        if (!cashedOut) {
+          displayMessage(`💥 CRASHED AT ${crashPoint.toFixed(2)}× — YOU LOST ₱${bet.toLocaleString()}`, "lose");
+        }
+        gameRunning = false;
+      }
+    }, 100); 
+  }
+
+  function cashOut() {
+    if (cashedOut || crashed || !gameRunning) return;
+
+    cashedOut = true;
+    clearInterval(interval); 
+    document.getElementById("cashout-btn").disabled = true;
+    document.getElementById("start-btn").disabled = false;
+    document.getElementById("bet-amount").disabled = false;
+    document.getElementById("auto-cashout").disabled = false;
+    canvas.classList.remove('crashed-border'); 
+
+
+    const winnings = Math.floor(bet * parseFloat(multiplier.toFixed(2))); 
+    coins += winnings;
+    localStorage.setItem(`balance_${currentUser}`, coins);
+    document.getElementById("coins").textContent = coins.toLocaleString();
+    displayMessage(`✅ CASHED OUT AT ${multiplier.toFixed(2)}× — YOU WON ₱${winnings.toLocaleString()}`, "win");
+    document.getElementById("last-crash").textContent = `🕹️ LAST CRASH POINT: ${crashPoint.toFixed(2)}×`; 
+
+    document.getElementById("multiplier").textContent = `${multiplier.toFixed(2)}×`;
+
+    if (!crashed) { 
+      addCrashToHistory(crashPoint.toFixed(2));
+    }
+    gameRunning = false;
+  }
+
+  function displayMessage(message, type = 'info') {
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = message;
+      resultEl.className = `result ${type}`;
+  }
+
+  // Initial load
+  window.onload = function() {
+    coins = parseInt(localStorage.getItem(`balance_${currentUser}`)) || 1000;
+    document.getElementById("coins").textContent = coins.toLocaleString(); 
+    document.getElementById("bet-amount").value = bet; 
+    document.getElementById("auto-cashout").value = autoCashout; 
+
+    document.getElementById("multiplier").textContent = `1.00×`;
+    document.getElementById("multiplier").classList.remove('crashed');
+    canvas.classList.remove('crashed-border');
+    displayMessage("Ready to launch!", "info"); 
+    
+    if (crashHistory.length > 0) {
+      document.getElementById("last-crash").textContent = `🎵 LAST CRASH POINT: ${crashHistory[0]}×`;
+    } else {
+      document.getElementById("last-crash").textContent = `No recent crash data.`; 
+    }
+    
+    updateCrashHistoryDisplay(); 
+    time = 0; 
+    drawCurve(); 
+  };
+
+  function updateBalanceDisplay() {
+    document.getElementById("coins").textContent = coins.toLocaleString();
+  }
+</script>
+</body>
+</html>

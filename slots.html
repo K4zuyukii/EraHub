@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slot Machine</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* General Body Styling */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0d0d1e; /* Darker, almost black background */
+      color: #e0e0e0; /* Softer white for general text */
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* Prevent scrollbars from glowing elements */
+      position: relative;
+    }
+
+    /* Background Animation - for the subtle glowing particles */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(30, 0, 50, 0.3) 0%, transparent 70%);
+        animation: subtlePulse 15s infinite alternate;
+        z-index: -1;
+    }
+
+    @keyframes subtlePulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        100% { transform: scale(1.1); opacity: 0.9; }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 600px; /* Adjusted width for slot machine */
+      width: 95%; /* Responsive width */
+      background: #1c1c2e; /* Darker background for the container */
+      padding: 30px;
+      border-radius: 25px; /* More rounded */
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.4), inset 0 0 20px rgba(0, 255, 255, 0.15); /* Stronger neon glow */
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(0, 255, 255, 0.6); /* More prominent border */
+      animation: fadeIn 1s ease-out;
+      position: relative;
+      z-index: 1; /* Ensure container is above background effects */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Game Title */
+    h1 {
+      font-size: 3.8em; /* Larger title */
+      color: #00ffff;
+      text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; /* More intense glow */
+      margin-bottom: 35px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      animation: neonFlicker 1.5s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+        0%, 100% { text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; }
+        50% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff; }
+    }
+
+
+    /* Scoreboard */
+    .scoreboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 35px;
+      padding: 15px 25px;
+      color: #e0e0e0;
+      font-size: 1.1em;
+    }
+
+    .balance-display {
+        background: #0d0d1e;
+        border-radius: 15px;
+        padding: 10px 20px;
+        border: 2px solid rgba(0, 255, 255, 0.6);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 10px rgba(0, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .balance-display p {
+        margin: 0;
+        font-size: 1.2em;
+        color: #00ffcc;
+        font-weight: bold;
+    }
+
+    .balance-display p span {
+        color: #fff;
+    }
+
+    .balance-display img {
+        height: 1.2em;
+        vertical-align: middle;
+    }
+
+    .scoreboard label {
+        display: block;
+        margin-bottom: 5px;
+        color: #00ffff;
+        font-size: 1.2em;
+        text-shadow: 0 0 8px #00ffff;
+        font-weight: 600;
+    }
+
+    .scoreboard input {
+      padding: 8px 12px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      border: 1px solid #00ffff;
+      background-color: #0d0d1e; /* Dark input background */
+      color: #00ffcc;
+      text-align: center;
+      margin: 0 auto; /* Center input */
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      transition: all 0.2s ease;
+      width: 80%; /* Smaller width for input */
+      max-width: 150px;
+    }
+
+    .scoreboard input:focus {
+        outline: none;
+        border-color: #00ff88;
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    }
+
+    /* Slots Machine Display */
+    .slots-machine-frame {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 30px auto;
+        padding: 15px; /* Inner padding around the slots */
+        background: linear-gradient(145deg, #333, #1a1a1a); /* Dark metallic/glossy background for the frame */
+        border-radius: 20px;
+        box-shadow:
+            inset 0 0 15px rgba(0,0,0,0.8), /* Inner dark shadow for depth */
+            0 0 20px rgba(0,0,0,0.5),      /* Outer dark shadow */
+            0 0 30px rgba(255, 0, 255, 0.4), /* Outer pink glow */
+            inset 0 0 10px rgba(255, 0, 255, 0.2); /* Inner pink glow */
+        border: 2px solid #880088; /* Purple border */
+        width: fit-content;
+        max-width: 450px; /* Allow more width */
+    }
+
+    .slots {
+      display: flex;
+      gap: 15px; /* Space between slots */
+    }
+
+    .slot {
+      font-size: 3.5em; /* Larger symbols */
+      width: 90px; /* Larger slot width */
+      height: 90px; /* Larger slot height */
+      background: #0d0d1e; /* Deep dark background for slot window */
+      border-radius: 12px;
+      box-shadow:
+        inset 0 0 10px rgba(0,0,0,0.8), /* Dark inner shadow for recess */
+        0 0 10px rgba(0, 255, 255, 0.4), /* Cyan glow around each slot */
+        inset 0 0 8px rgba(0, 255, 255, 0.2); /* Inner cyan highlight */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+      color: #fff; /* Ensure symbol color is white */
+      overflow: hidden;
+      position: relative;
+      perspective: 500px; /* For 3D spin */
+      border: 1px solid rgba(0, 255, 255, 0.6); /* Cyan border */
+    }
+
+    /* Slot Lever */
+    .slot-lever {
+        position: absolute;
+        right: -30px; /* Position to the right of the frame */
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 80px;
+        background: linear-gradient(to right, #666, #999, #666); /* Metallic gradient */
+        border-radius: 0 10px 10px 0;
+        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+        border: 1px solid #555;
+        cursor: pointer;
+        z-index: 2; /* Above other elements if needed */
+        transition: transform 0.2s ease;
+    }
+
+    .slot-lever::before { /* Handle top */
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: -5px;
+        width: 30px;
+        height: 30px;
+        background: radial-gradient(circle at center, #ff0077 0%, #cc0055 70%); /* Glowing pink ball */
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(255, 0, 119, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+        border: 1px solid #990044;
+    }
+
+    .slot-lever.active { /* Visual feedback when lever is "pulled" */
+        transform: translateY(-40%) translateX(-5px) rotateX(10deg); /* Slightly down and tilted */
+        box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+    }
+
+
+    .slot.spin {
+      animation: slotSpin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; /* More dynamic spin */
+    }
+
+    @keyframes slotSpin {
+      0%   { transform: rotateX(0deg); opacity: 1;}
+      50%  { transform: rotateX(90deg) scale(0.9); opacity: 0.5;}
+      100% { transform: rotateX(180deg); opacity: 1;}
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px; /* Space between buttons */
+    }
+
+    .action-button {
+      padding: 16px 32px; /* Slightly larger buttons */
+      font-size: 1.2em;
+      border-radius: 15px; /* More rounded */
+      border: none;
+      background: linear-gradient(45deg, #00ff88, #00cc66);
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0, 255, 136, 0.6); /* Stronger glow */
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease-out; /* Slower sweep effect */
+    }
+
+    .action-button:hover::before {
+      left: 100%;
+    }
+
+    .action-button:hover {
+      background: linear-gradient(45deg, #00cc66, #009944);
+      transform: translateY(-5px); /* More pronounced lift */
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.9), 0 8px 15px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Result Message */
+    .result-message {
+      font-size: 1.6em; /* Larger result message */
+      margin: 25px 0;
+      color: #ff5555; /* Distinct red */
+      text-shadow: 0 0 12px #ff5555, 0 0 25px rgba(255, 85, 85, 0.7); /* Stronger glow */
+      font-weight: bold;
+      animation: pulseText 1s infinite alternate;
+    }
+
+    @keyframes pulseText {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(1.03); opacity: 0.95; }
+    }
+
+    /* Back Button */
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2em;
+      padding: 12px 25px;
+      border-radius: 10px;
+      background: rgba(0, 255, 255, 0.08); /* Lighter, subtle background */
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .back-button:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 0 18px rgba(0, 255, 255, 0.7);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 3em;
+      }
+      .container {
+        padding: 25px 15px;
+      }
+      .scoreboard {
+          gap: 10px;
+          font-size: 1em;
+      }
+      .scoreboard input {
+          width: 90%;
+      }
+      .slots-machine-frame {
+          padding: 10px;
+          max-width: 300px;
+      }
+      .slot {
+        width: 70px;
+        height: 70px;
+        font-size: 3em;
+      }
+      .slot-lever {
+          right: -25px;
+          width: 15px;
+          height: 60px;
+      }
+      .slot-lever::before {
+          top: -10px;
+          left: -2px;
+          width: 25px;
+          height: 25px;
+      }
+      .action-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+      }
+      .result-message {
+          font-size: 1.4em;
+      }
+      .back-button {
+          font-size: 1em;
+          padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎰 Slot Machine</h1>
+
+    <div class="scoreboard">
+      <div class="balance-display">
+         <p>💰 Balance: ₱ <span id="coins">0</span></p>
+      </div>
+      <label>Enter Bet Amount (₱1–₱500):</label>
+      <input type="number" id="bet-amount" min="1" max="500" step="1" value="10" />
+    </div>
+
+    <div class="slots-machine-frame">
+      <div class="slots">
+        <span id="slot1" class="slot">🍒</span>
+        <span id="slot2" class="slot">🍋</span>
+        <span id="slot3" class="slot">🍊</span>
+      </div>
+      <div class="slot-lever" onclick="spinSlotsFromLever()"></div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-button" onclick="spinSlots()">🎲 Spin</button>
+        <button class="action-button" onclick="resetSlots()">🔁 Reset</button>
+    </div>
+
+    <p id="result" class="result-message"></p>
+    <a href="index.html" class="back-button">⬅ Back to Menu</a>
+
+    <script>
+      const currentUser = localStorage.getItem("currentUser");
+      let coins = 0;
+
+      if (currentUser) {
+        const savedBalance = localStorage.getItem(`balance_${currentUser}`);
+        coins = savedBalance ? parseInt(savedBalance) : 0;
+      } else {
+        coins = 0;
+      }
+
+      document.getElementById('coins').textContent = coins;
+
+      function spinSlotsFromLever() {
+        const lever = document.querySelector('.slot-lever');
+        lever.classList.add('active'); // Add active class for visual feedback
+        setTimeout(() => {
+            lever.classList.remove('active'); // Remove after a short delay
+        }, 300);
+        spinSlots(); // Call the main spin function
+      }
+
+
+      function spinSlots() {
+        const betInput = parseInt(document.getElementById('bet-amount').value);
+        const bet = Math.min(500, Math.max(1, betInput || 0));
+
+        if (coins < bet) {
+          alert("Not enough balance to spin.");
+          return;
+        }
+
+        coins -= bet;
+        document.getElementById('coins').textContent = coins;
+        document.getElementById('result').textContent = "Spinning...";
+
+        const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
+        const slotEls = [
+          document.getElementById('slot1'),
+          document.getElementById('slot2'),
+          document.getElementById('slot3')
+        ];
+
+        // Apply spin class to all slots simultaneously
+        slotEls.forEach(el => {
+          el.classList.add("spin");
+          el.textContent = "❓"; // Changed to '❓' for spinning state
+        });
+
+        // Use individual timeouts to reveal slots sequentially
+        const spinDuration = 2000; // Total duration for all slots to stop
+        const revealDelay = 300; // Delay between each slot revealing
+
+        let finalSymbols = [];
+
+        slotEls.forEach((el, index) => {
+          setTimeout(() => {
+            el.classList.remove("spin");
+            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            el.textContent = symbol;
+            finalSymbols[index] = symbol; // Store the final symbol
+
+            // Check for win condition only after the last slot has stopped
+            if (index === slotEls.length - 1) {
+              evaluateResult(finalSymbols, bet);
+            }
+          }, spinDuration + (index * revealDelay));
+        });
+      }
+
+      function evaluateResult(finalSymbols, bet) {
+        const [s1, s2, s3] = finalSymbols;
+        let result = "😢 No match. You lose!";
+        let multiplier = 0;
+
+        if (s1 === s2 && s2 === s3) {
+          multiplier = (s1 === '💎') ? 5 : 3;
+          result = (s1 === '💎')
+            ? "💎💎💎 JACKPOT! You win 5×!"
+            : `🎉 Triple ${s1}! You win ${multiplier}×!`;
+        } else if (s1 === s2 || s2 === s3 || s1 === s3) { // Two matches
+            multiplier = 1; // Double match, win back bet
+            result = "✨ Double match! You get your bet back.";
+        }
+
+
+        if (multiplier > 0) {
+          coins += bet * multiplier;
+        }
+
+        // Save updated balance for current user
+        if (currentUser) {
+          localStorage.setItem(`balance_${currentUser}`, coins);
+          localStorage.setItem("balance", coins); // sync for Game Hub
+        }
+
+        document.getElementById('coins').textContent = coins;
+        document.getElementById('result').textContent = result;
+      }
+
+      function resetSlots() {
+        document.getElementById('slot1').textContent = "🍒";
+        document.getElementById('slot2').textContent = "🍋";
+        document.getElementById('slot3').textContent = "🍊";
+        document.getElementById('result').textContent = "";
+        // Optional: Re-fetch and display current balance if reset is used to "cancel" a game
+        if (currentUser) {
+            const savedBalance = localStorage.getItem(`balance_${currentUser}`);
+            coins = savedBalance ? parseInt(savedBalance) : 0;
+            document.getElementById('coins').textContent = coins;
+        }
+      }
+    </script>
+  </div>
+</body>
+</html>
