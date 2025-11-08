@@ -185,6 +185,13 @@
         to { text-shadow: 0 0 10px, 0 0 15px rgba(255, 255, 255, 0.5); }
     }
 
+    .auth-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 50px; /* Added margin-bottom to space from menu-buttons */
+      flex-wrap: wrap;
+    }
 
     .menu-buttons {
       display: grid;
@@ -240,14 +247,6 @@
         inset 0 0 12px rgba(0, 191, 255, 0.3);
       border-color: var(--neon-blue-primary);
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    }
-
-    .auth-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 40px;
-      flex-wrap: wrap;
     }
 
     .login-button, .logout-button {
@@ -408,6 +407,11 @@
           <div class="username"><i class="fa-solid fa-user-astronaut"></i> Logged in as: <span id="user-display">Guest</span></div>
       </div>
 
+      <div class="auth-buttons" id="auth-buttons">
+        <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
+        <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+
       <div class="menu-buttons">
         <a href="card.html"><i class="fa-solid fa-hand-cards"></i> Card Draw 21</a>
         <a href="slots.html"><i class="fa-solid fa-gamepad"></i> Slot Machine</a>
@@ -416,11 +420,6 @@
         <a href="crashgame.html"><i class="fa-solid fa-chart-line"></i> Crash</a>
         <a href="mines.html"><i class="fa-solid fa-bomb"></i> Mines</a>
         <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
-      </div>
-
-      <div class="auth-buttons" id="auth-buttons">
-        <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
-        <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
       </div>
     </div>
   </div> <!-- End of page-wrapper -->
@@ -437,7 +436,3 @@
     function setCanvasSize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    }
-
-    class Particle {
-      constructor() {
