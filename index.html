@@ -246,7 +246,7 @@
       flex-wrap: wrap;
     }
 
-    .login-button, .logout-button {
+    .login-button, .logout-button, .wallet-button-logged-in { /* Added new class here */
       display: inline-flex; /* Use flex for icon alignment */
       align-items: center;
       background: linear-gradient(45deg, var(--neon-green-primary), #00cc80);
@@ -266,7 +266,7 @@
       overflow: hidden;
     }
 
-    .login-button::before, .logout-button::before {
+    .login-button::before, .logout-button::before, .wallet-button-logged-in::before { /* Added new class here */
         content: '';
         position: absolute;
         top: -50%;
@@ -279,13 +279,13 @@
         transform: scale(0);
     }
 
-    .login-button:hover::before, .logout-button:hover::before {
+    .login-button:hover::before, .logout-button:hover::before, .wallet-button-logged-in:hover::before { /* Added new class here */
         opacity: 1;
         transform: scale(1);
     }
 
 
-    .login-button:hover, .logout-button:hover {
+    .login-button:hover, .logout-button:hover, .wallet-button-logged-in:hover { /* Added new class here */
       background: linear-gradient(45deg, var(--neon-blue-primary), #0099e6);
       color: #fff;
       transform: translateY(-6px) scale(1.02);
@@ -309,8 +309,9 @@
 
     .balance .fa-solid { color: var(--neon-yellow-primary); }
     .username .fa-solid { color: var(--neon-green-primary); }
-    .login-button .fa-solid, .logout-button .fa-solid { color: var(--bg-dark-primary); }
-    .login-button:hover .fa-solid, .logout-button:hover .fa-solid { color: #fff; }
+    /* Updated icon colors for login/logout/wallet buttons */
+    .login-button .fa-solid, .logout-button .fa-solid, .wallet-button-logged-in .fa-solid { color: var(--bg-dark-primary); }
+    .login-button:hover .fa-solid, .logout-button:hover .fa-solid, .wallet-button-logged-in:hover .fa-solid { color: #fff; }
 
 
     /* Responsive Adjustments */
@@ -371,7 +372,7 @@
           font-size: 1em;
           margin-right: 8px;
       }
-      .login-button, .logout-button {
+      .login-button, .logout-button, .wallet-button-logged-in { /* Added new class here */
         padding: 12px 25px;
         font-size: 1em;
         gap: 8px;
@@ -412,6 +413,7 @@
     </div>
 
     <div class="auth-buttons" id="auth-buttons">
+      <!-- This button will dynamically change -->
       <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
       <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
     </div>
@@ -486,42 +488,54 @@
       initParticles();
     });
 
-    // --- Core Logic for User State ---
+    // --- Core Logic for User State (MODIFIED) ---
     function updateUIForUser() {
       const currentUser = localStorage.getItem("currentUser");
       const userDisplayElement = document.getElementById("user-display");
       const coinsElement = document.getElementById("coins");
-      const loginBtn = document.getElementById("login-btn");
+      const loginBtn = document.getElementById("login-btn"); // This is the original Login/Signup link
       const logoutBtn = document.getElementById("logout-btn");
 
       if (currentUser) {
         if (currentUser.toLowerCase() === "admin") {
-          // Special handling for admin on the main hub
           userDisplayElement.textContent = "Admin";
-          coinsElement.textContent = "N/A"; // Admins don't have a personal balance here
-          loginBtn.style.display = "none";
-          logoutBtn.style.display = "inline-flex";
+          coinsElement.textContent = "N/A";
+          loginBtn.style.display = "none"; // Hide the Login/Signup button for admin
+          logoutBtn.style.display = "inline-flex"; // Show Logout for admin
         } else {
-          // Regular user
+          // Regular user is logged in
           userDisplayElement.textContent = currentUser;
           let coins = 0;
           const savedBalance = localStorage.getItem(`balance_${currentUser.toLowerCase()}`);
           if (savedBalance !== null) {
               coins = parseInt(savedBalance);
           } else {
-              // This case should ideally be handled during signup, but as a fallback
-              coins = 1000; // Default starting balance
+              coins = 1000; // Default starting balance if not set
               localStorage.setItem(`balance_${currentUser.toLowerCase()}`, coins.toString());
           }
           coinsElement.textContent = coins.toLocaleString();
-          loginBtn.style.display = "none";
-          logoutBtn.style.display = "inline-flex";
+
+          // Change the login button to a "My Wallet" button
+          loginBtn.href = "wallet.html"; // Ensure it still links to wallet.html
+          loginBtn.innerHTML = '<i class="fa-solid fa-wallet"></i> My Wallet'; // Change text and icon
+          loginBtn.style.display = "inline-flex"; // Make sure it's visible as "My Wallet"
+          loginBtn.classList.remove('login-button'); // Remove login button specific styling if any
+          loginBtn.classList.add('wallet-button-logged-in'); // Add a new class for styling when logged in
+
+          logoutBtn.style.display = "inline-flex"; // Logout button should still be visible
         }
       } else {
         // Not logged in (Guest)
         userDisplayElement.textContent = "Guest";
         coinsElement.textContent = "0";
+
+        // Reset the login button to its original "Login / Signup" state
+        loginBtn.href = "wallet.html";
+        loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Login / Signup';
         loginBtn.style.display = "inline-flex";
+        loginBtn.classList.add('login-button'); // Ensure original styling is back
+        loginBtn.classList.remove('wallet-button-logged-in'); // Remove logged-in styling
+
         logoutBtn.style.display = "none";
       }
     }
@@ -530,7 +544,7 @@
       localStorage.removeItem("currentUser");
       // After logout, immediately update the UI
       updateUIForUser();
-      // Optional: Redirect to wallet.html (login screen)
+      // Redirect to the wallet.html (login screen) after logout
       window.location.href = "wallet.html";
     }
 
