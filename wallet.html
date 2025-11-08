@@ -254,22 +254,22 @@
     // Initial check for user login
     if (currentUser) {
       if (currentUser === "admin") {
+        // Redirect admin users to their admin page
         window.location.href = "admin.html";
       } else {
-        // This block executes if a regular user is logged in
+        // For regular users, load their balance and display the wallet
         const savedBalance = localStorage.getItem(`balance_${currentUser}`);
-        coins = savedBalance ? parseInt(savedBalance) : 0;
+        coins = savedBalance ? parseInt(savedBalance) : 0; // If no balance, default to 0
         document.getElementById('user-display').textContent = currentUser;
-        document.getElementById('coins').textContent = coins.toLocaleString(); // Format balance
+        document.getElementById('coins').textContent = coins.toLocaleString(); // Format balance with commas
         document.getElementById('auth-screen').style.display = "none";
         document.getElementById('wallet-screen').style.display = "block";
       }
     } else {
-        // If no currentUser, display the auth screen
+        // If no user is logged in, display the authentication screen
         document.getElementById('auth-screen').style.display = "block";
         document.getElementById('wallet-screen').style.display = "none";
     }
-
 
     function signup() {
       const username = document.getElementById('username').value.trim();
@@ -291,9 +291,10 @@
       }
 
       localStorage.setItem(`user_${username}`, password);
-      localStorage.setItem(`balance_${username}`, "1000"); // Set initial balance on signup
+      localStorage.setItem(`balance_${username}`, "0"); // Set initial balance to 0 on signup
       alert("Signup successful! You can now log in.");
-      // Optional: Clear fields or automatically log in
+      
+      // Optionally clear fields after successful signup
       document.getElementById('username').value = "";
       document.getElementById('password').value = "";
     }
@@ -302,6 +303,7 @@
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
+      // Admin login check
       if (username === "admin" && password === "Umaysa2022@") {
         localStorage.setItem("currentUser", "admin");
         window.location.href = "admin.html";
@@ -319,11 +321,12 @@
         return;
       }
 
+      // Successful regular user login
       currentUser = username;
       localStorage.setItem("currentUser", username);
 
       const savedBalance = localStorage.getItem(`balance_${username}`);
-      coins = savedBalance ? parseInt(savedBalance) : 0;
+      coins = savedBalance ? parseInt(savedBalance) : 0; // Load balance, default to 0 if not found
 
       document.getElementById('user-display').textContent = username;
       document.getElementById('coins').textContent = coins.toLocaleString(); // Format balance
@@ -333,7 +336,7 @@
 
     function showQRCode(amount) {
       document.getElementById('qr-amount').textContent = amount.toLocaleString();
-      // CHANGED THIS LINE: Removed 'images/' prefix
+      // Corrected image path: Assumes images are in the SAME directory as wallet.html
       document.getElementById('qr-image').src = `${amount}gcash.jpg`; 
       document.getElementById('qr-container').style.display = "block";
     }
@@ -347,6 +350,12 @@
         return;
       }
 
+      if (!currentUser) {
+        alert("You must be logged in to submit a deposit request.");
+        return;
+      }
+
+      // Store deposit request in localStorage (client-side only!)
       const request = {
         username: currentUser,
         amount,
@@ -374,15 +383,22 @@
         return;
       }
 
+      if (!currentUser) {
+        alert("You must be logged in to submit a withdrawal request.");
+        return;
+      }
+
       if (amount > coins) {
         alert("Insufficient balance.");
         return;
       }
 
+      // Deduct from client-side balance immediately (pending admin approval)
       coins -= amount;
       localStorage.setItem(`balance_${currentUser}`, coins.toString());
       document.getElementById("coins").textContent = coins.toLocaleString();
 
+      // Store withdrawal request in localStorage (client-side only!)
       const request = {
         username: currentUser,
         amount,
