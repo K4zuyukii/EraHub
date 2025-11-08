@@ -2,161 +2,513 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallet</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERA HUB</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    :root {
+      --bg-dark-primary: #0a0a0c;
+      --bg-dark-secondary: #0c1a2c;
+      --bg-dark-accent: #152538;
+
+      --neon-green-primary: #00ff99; /* Brighter, more vibrant green */
+      --neon-green-shadow: rgba(0, 255, 153, 0.7);
+      --neon-blue-primary: #00bfff; /* Sky blue */
+      --neon-blue-shadow: rgba(0, 191, 255, 0.7);
+      --neon-yellow-primary: #ffdd4a; /* Golden yellow */
+      --neon-yellow-shadow: rgba(255, 221, 74, 0.7);
+
+      --text-light: #e0e0e0;
+      --text-dimmed: #b0b0b0;
+
+      --container-bg: rgba(10, 15, 25, 0.95); /* Deeper, slightly translucent */
+      --card-bg: rgba(20, 30, 45, 0.8); /* For menu items */
+
+      --shadow-intensity-high: 0.9;
+      --shadow-intensity-medium: 0.6;
+      --shadow-intensity-low: 0.3;
+      --border-radius-primary: 15px;
+      --border-radius-secondary: 10px;
+    }
+
+    /* FIX: Allow scrolling on the body */
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
-      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 50%, var(--bg-dark-accent) 100%);
+      color: var(--text-light);
       text-align: center;
-      padding: 40px;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background-color: #222;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #00ffcc;
-    }
-    .balance {
-      font-size: 1.5em;
-      margin-bottom: 30px;
-      color: #ffcc00;
-    }
-    .deposit-buttons {
+      padding: 30px 20px;
+      margin: 0;
+      min-height: 100vh;
       display: flex;
-      flex-wrap: wrap;
+      /* FIX: Align content to the top, instead of centering, to allow natural flow and scrolling */
+      align-items: flex-start; /* Changed from center */
       justify-content: center;
+      /* FIX: Removed overflow: hidden; */
+      position: relative;
+      background-attachment: fixed; /* Ensures gradient stays put */
+      box-sizing: border-box; /* Ensures padding is included in height/width calculation */
+    }
+
+    /* Animated Grid Background */
+    body::before {
+      content: '';
+      position: fixed; /* FIX: Changed to fixed so it covers the entire viewport regardless of scroll */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        linear-gradient(to right, rgba(0, 255, 153, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 153, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridFlow 30s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes gridFlow {
+      from { background-position: 0 0; }
+      to { background-position: 40px 40px; }
+    }
+
+    /* Particle Canvas */
+    #particle-canvas {
+      position: fixed; /* FIX: Changed to fixed to stay in viewport */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none; /* Allows clicks to pass through */
+    }
+
+    .container {
+      max-width: 980px;
+      width: 100%;
+      background: var(--container-bg);
+      padding: 50px 40px;
+      border-radius: var(--border-radius-primary);
+      box-shadow:
+        0 0 60px var(--neon-green-shadow), /* Primary glow */
+        0 0 120px var(--neon-blue-shadow); /* Secondary subtle glow */
+      backdrop-filter: blur(15px) brightness(1.1); /* Stronger blur, brighter effect */
+      border: 2px solid var(--neon-green-primary);
+      animation: fadeIn 1.2s ease-in-out forwards;
+      position: relative;
+      z-index: 2; /* Ensure container is above particles and grid */
+      transform-style: preserve-3d; /* For subtle parallax effects if needed */
+      /* FIX: Add margin-top and margin-bottom to ensure it's not squished to the top/bottom */
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(50px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4.5em;
+      color: var(--neon-blue-primary);
+      text-shadow: 0 0 25px var(--neon-blue-shadow), 0 0 50px var(--neon-blue-shadow), 0 0 80px rgba(0, 191, 255, 0.6);
+      margin-bottom: 35px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      position: relative;
+      animation: neonPulse 2.5s infinite alternate ease-in-out;
+      transform-origin: center center;
+    }
+
+    h1 .icon {
+        animation: iconFloat 3s infinite alternate ease-in-out;
+        display: inline-block;
+    }
+
+    @keyframes neonPulse {
+        0% { text-shadow: 0 0 15px var(--neon-blue-shadow), 0 0 30px var(--neon-blue-shadow), 0 0 45px rgba(0, 191, 255, 0.4); transform: scale(1); }
+        100% { text-shadow: 0 0 25px var(--neon-blue-shadow), 0 0 50px var(--neon-blue-shadow), 0 0 75px rgba(0, 191, 255, 0.6); transform: scale(1.02); }
+    }
+    @keyframes iconFloat {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .info-section {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+    }
+
+    .balance, .username {
+      font-size: 1.8em;
+      color: var(--neon-yellow-primary);
+      text-shadow: 0 0 10px var(--neon-yellow-shadow), 0 0 20px rgba(255, 221, 74, 0.5);
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      display: flex;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
+      animation: textGlow 2s infinite alternate ease-in-out;
+      background: rgba(0,0,0,0.2);
+      padding: 12px 25px;
+      border-radius: var(--border-radius-secondary);
+      border: 1px solid rgba(255,221,74,0.3);
+      box-shadow: inset 0 0 8px rgba(255,221,74,0.1);
     }
-    .deposit-buttons button,
-    button {
-      padding: 10px 20px;
-      font-size: 1em;
-      border-radius: 8px;
-      border: none;
-      background-color: #00ff88;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 10px;
+
+    .username {
+        color: var(--neon-green-primary);
+        text-shadow: 0 0 10px var(--neon-green-shadow), 0 0 20px rgba(0, 255, 153, 0.5);
+        border: 1px solid rgba(0,255,153,0.3);
+        box-shadow: inset 0 0 8px rgba(0,255,153,0.1);
+        animation-delay: 0.2s;
     }
-    .deposit-buttons button:hover,
-    button:hover {
-      background-color: #00cc66;
+
+    @keyframes textGlow {
+        from { text-shadow: 0 0 6px, 0 0 10px rgba(255, 255, 255, 0.3); }
+        to { text-shadow: 0 0 10px, 0 0 15px rgba(255, 255, 255, 0.5); }
     }
-    input {
-      padding: 10px;
-      font-size: 1em;
-      width: 80%;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      border: none;
+
+
+    .menu-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 60px;
     }
-    #qr-container {
-      display: none;
-      margin-top: 20px;
-    }
-    #qr-container img {
-      width: 150px;
-      height: 150px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #00ffcc;
-    }
-    .back-link {
-      display: block;
-      margin-top: 30px;
-      color: #00ffff;
+
+    .menu-buttons a {
+      background: var(--card-bg);
+      color: var(--text-light);
       text-decoration: none;
+      padding: 22px 30px;
+      font-size: 1.3em;
+      border-radius: var(--border-radius-secondary);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(0, 255, 153, 0.2), inset 0 0 8px rgba(0, 255, 153, 0.08);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border: 1px solid rgba(0, 255, 153, 0.3);
+      position: relative;
+      overflow: hidden; /* For shimmer effect */
+    }
+
+    .menu-buttons a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -180%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.8s ease-out;
+      pointer-events: none;
+    }
+
+    .menu-buttons a:hover::before {
+      left: 180%;
+    }
+
+    .menu-buttons a:hover {
+      background: rgba(0, 191, 255, 0.1); /* Frosted glass effect */
+      backdrop-filter: blur(10px) brightness(1.2);
+      color: #fff;
+      transform: translateY(-8px) scale(1.03);
+      box-shadow:
+        0 18px 40px var(--neon-blue-shadow),
+        inset 0 0 12px rgba(0, 191, 255, 0.3);
+      border-color: var(--neon-blue-primary);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .auth-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .login-button, .logout-button {
+      display: inline-flex; /* Use flex for icon alignment */
+      align-items: center;
+      background: linear-gradient(45deg, var(--neon-green-primary), #00cc80);
+      color: var(--bg-dark-primary); /* Dark text for contrast */
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: var(--border-radius-primary);
       font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 25px var(--neon-green-shadow);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-button::before, .logout-button::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        transform: scale(0);
+    }
+
+    .login-button:hover::before, .logout-button:hover::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+
+    .login-button:hover, .logout-button:hover {
+      background: linear-gradient(45deg, var(--neon-blue-primary), #0099e6);
+      color: #fff;
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 10px 30px var(--neon-blue-shadow);
+    }
+
+    /* Icons */
+    .fa-solid, .fa-regular {
+        margin-right: 12px;
+        font-size: 1.2em;
+        color: inherit; /* Inherit color from parent for better theme integration */
+        transition: color 0.3s ease;
+    }
+
+    .menu-buttons a .fa-solid, .menu-buttons a .fa-regular {
+        color: var(--neon-green-primary);
+    }
+    .menu-buttons a:hover .fa-solid, .menu-buttons a:hover .fa-regular {
+        color: var(--neon-blue-primary);
+    }
+
+    .balance .fa-solid { color: var(--neon-yellow-primary); }
+    .username .fa-solid { color: var(--neon-green-primary); }
+    .login-button .fa-solid, .logout-button .fa-solid { color: var(--bg-dark-primary); }
+    .login-button:hover .fa-solid, .logout-button:hover .fa-solid { color: #fff; }
+
+
+    /* Responsive Adjustments */
+    @media (max-width: 900px) {
+      .container {
+        padding: 40px 30px;
+      }
+      h1 {
+        font-size: 3.5em;
+        letter-spacing: 3px;
+      }
+      .info-section {
+        gap: 20px;
+        flex-direction: column;
+        align-items: center;
+      }
+      .balance, .username {
+        font-size: 1.6em;
+        padding: 10px 20px;
+        width: fit-content;
+      }
+      .menu-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      .menu-buttons a {
+        font-size: 1.1em;
+        padding: 18px 25px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+      h1 {
+        font-size: 2.5em;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+      }
+      .container {
+        padding: 30px 20px;
+      }
+      .balance, .username {
+        font-size: 1.3em;
+        padding: 8px 15px;
+        gap: 8px;
+      }
+      .menu-buttons {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .menu-buttons a {
+        font-size: 1em;
+        padding: 15px;
+      }
+      .fa-solid, .fa-regular {
+          font-size: 1em;
+          margin-right: 8px;
+      }
+      .login-button, .logout-button {
+        padding: 12px 25px;
+        font-size: 1em;
+        gap: 8px;
+      }
+      .auth-buttons {
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 2em;
+        letter-spacing: 1px;
+      }
+      .balance, .username {
+        font-size: 1.1em;
+      }
     }
   </style>
 </head>
 <body>
+  <canvas id="particle-canvas"></canvas> <!-- Particle background -->
   <div class="container">
-    <h1>💼 Wallet</h1>
-    <div class="balance">Current Balance: ₱<span id="coins">0</span></div>
-
-    <p>Select Deposit Amount:</p>
-    <div class="deposit-buttons">
-      <button onclick="showQRCode(50)">₱50</button>
-      <button onclick="showQRCode(100)">₱100</button>
-      <button onclick="showQRCode(200)">₱200</button>
-      <button onclick="showQRCode(500)">₱500</button>
-      <button onclick="showQRCode(1000)">₱1000</button>
+    <h1><i class="fa-solid fa-cube"></i> ERA HUB</h1>
+    <div class="info-section">
+        <div class="balance"><i class="fa-solid fa-coins"></i> Balance: ₱<span id="coins">0</span></div>
+        <div class="username"><i class="fa-solid fa-user-astronaut"></i> Logged in as: <span id="user-display">Guest</span></div>
     </div>
 
-    <div id="qr-container">
-      <p>📷 Scan this QR code to complete your ₱<span id="qr-amount">0</span> deposit:</p>
-      <img id="qr-image" src="50gcash.jpg" alt="GCash QR Code" />
-      <button onclick="confirmDeposit()">✅ Confirm Payment</button>
+    <div class="menu-buttons">
+      <a href="card.html"><i class="fa-solid fa-hand-cards"></i> Card Draw 21</a>
+      <a href="slots.html"><i class="fa-solid fa-gamepad"></i> Slot Machine</a>
+      <a href="dice.html"><i class="fa-solid fa-dice"></i> Dice Roll</a>
+      <a href="plingko.html"><i class="fa-solid fa-droplet"></i> Plingko</a>
+      <a href="crashgame.html"><i class="fa-solid fa-chart-line"></i> Crash</a>
+      <a href="mines.html"><i class="fa-solid fa-bomb"></i> Mines</a>
+      <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
     </div>
 
-     <div id="qr-container">
-      <p>📷 Scan this QR code to complete your ₱<span id="qr-amount">0</span> deposit:</p>
-      <img id="qr-image" src="100gcash.jpg" alt="GCash QR Code" />
-      <button onclick="confirmDeposit()">✅ Confirm Payment</button>
+    <div class="auth-buttons" id="auth-buttons">
+      <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
+      <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
     </div>
-
-      <div id="qr-container">
-      <p>📷 Scan this QR code to complete your ₱<span id="qr-amount">0</span> deposit:</p>
-      <img id="qr-image" src="200gcash.jpg" alt="GCash QR Code" />
-      <button onclick="confirmDeposit()">✅ Confirm Payment</button>
-    </div>
-
-    <div id="qr-container">
-      <p>📷 Scan this QR code to complete your ₱<span id="qr-amount">0</span> deposit:</p>
-      <img id="qr-image" src="1000/gcash.jpg" alt="GCash QR Code" />
-      <button onclick="confirmDeposit()">✅ Confirm Payment</button>
-    </div>
-
-
-    <input type="number" id="withdraw-amount" placeholder="Enter withdraw amount" min="1" />
-    <button onclick="withdraw()">➖ Withdraw</button>
-
-    <a href="index.html" class="back-link">⬅ Back to Menu</a>
   </div>
 
   <script>
-    let coins = parseInt(localStorage.getItem('balance'));
-    if (isNaN(coins)) coins = 0;
-    document.getElementById('coins').textContent = coins;
+    // Particle background script
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 70;
+    const particleColor = 'rgba(0, 255, 153, 0.4)'; // Neon green for particles
+    const particleSpeed = 0.5; // Adjust speed
 
-    function showQRCode(amount) {
-      document.getElementById('qr-amount').textContent = amount;
-      document.getElementById('qr-image').src = "50gcash.jpg"; // Replace with your actual QR image
-      document.getElementById('qr-container').style.display = "block";
+    function setCanvasSize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
 
-    function confirmDeposit() {
-      const amount = parseInt(document.getElementById('qr-amount').textContent);
-      coins += amount;
-      localStorage.setItem('balance', coins);
-      document.getElementById('coins').textContent = coins;
-      document.getElementById('qr-container').style.display = "none";
-      alert(`₱${amount} deposited successfully!`);
-    }
-
-    function withdraw() {
-      const amount = parseInt(document.getElementById('withdraw-amount').value);
-      if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid withdraw amount.");
-        return;
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = Math.random() * 1 - 0.5 * particleSpeed; // -0.5 to 0.5
+        this.speedY = Math.random() * 1 - 0.5 * particleSpeed;
+        this.opacity = Math.random() * 0.8 + 0.2;
       }
-      if (amount > coins) {
-        alert("Insufficient balance.");
-        return;
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.size > 0.1) this.size -= 0.01; // Fade out slightly
+        if (this.opacity > 0.05) this.opacity -= 0.005;
+
+        // Reset particle if it goes off screen or becomes too small
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.size <= 0.1 || this.opacity <= 0.05) {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = Math.random() * 1 - 0.5 * particleSpeed;
+          this.speedY = Math.random() * 1 - 0.5 * particleSpeed;
+          this.opacity = Math.random() * 0.8 + 0.2;
+        }
       }
-      coins -= amount;
-      localStorage.setItem('balance', coins);
-      document.getElementById('coins').textContent = coins;
-      document.getElementById('withdraw-amount').value = "";
+      draw() {
+        ctx.fillStyle = `rgba(0, 255, 153, ${this.opacity})`; // Use neon green with dynamic opacity
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      }
     }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      requestAnimationFrame(animateParticles);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      setCanvasSize();
+      initParticles(); // Re-initialize particles on resize
+    });
+
+    // Main app logic
+    const currentUser = localStorage.getItem("currentUser");
+    let coins = 0;
+
+    if (currentUser) {
+      const savedBalance = localStorage.getItem(`balance_${currentUser}`);
+      coins = savedBalance ? parseInt(savedBalance) : 0;
+      document.getElementById("user-display").textContent = currentUser;
+      document.getElementById("logout-btn").style.display = "inline-flex"; // Use inline-flex for button
+      document.getElementById("login-btn").style.display = "none";
+    } else {
+      coins = 0;
+      document.getElementById("user-display").textContent = "Guest";
+      document.getElementById("logout-btn").style.display = "none";
+      document.getElementById("login-btn").style.display = "inline-flex"; // Use inline-flex for button
+    }
+
+    document.getElementById("coins").textContent = coins.toLocaleString(); // Format with commas
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      // Redirect to wallet or login page
+      window.location.href = "wallet.html";
+    }
+
+    // Initialize particle system
+    setCanvasSize();
+    initParticles();
+    animateParticles();
   </script>
 </body>
 </html>
-
