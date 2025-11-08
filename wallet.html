@@ -32,29 +32,37 @@
       --border-radius-secondary: 10px;
     }
 
-    /* FIX: Allow scrolling on the body */
     body {
       font-family: 'Share Tech Mono', monospace;
       background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 50%, var(--bg-dark-accent) 100%);
       color: var(--text-light);
       text-align: center;
-      padding: 30px 20px;
+      /* Removed padding from body, will apply to wrapper */
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      /* FIX: Align content to the top, instead of centering, to allow natural flow and scrolling */
-      align-items: flex-start; /* Changed from center */
-      justify-content: center;
-      /* FIX: Removed overflow: hidden; */
+      /* Removed min-height, display flex, align-items, justify-content from body */
       position: relative;
-      background-attachment: fixed; /* Ensures gradient stays put */
-      box-sizing: border-box; /* Ensures padding is included in height/width calculation */
+      background-attachment: fixed;
+      box-sizing: border-box;
+      /* FIX: Ensure body can actually scroll its content */
+      min-height: 100vh; /* Re-added min-height here, but scroll will be managed by the wrapper */
     }
+
+    /* New wrapper for centering and scrolling */
+    .page-wrapper {
+      min-height: 100vh; /* Make wrapper fill viewport */
+      display: flex;
+      flex-direction: column; /* Allows vertical centering */
+      align-items: center; /* Center horizontally */
+      justify-content: center; /* Center vertically if content is small */
+      padding: 30px 20px; /* Apply padding here */
+      box-sizing: border-box; /* Include padding in height */
+    }
+
 
     /* Animated Grid Background */
     body::before {
       content: '';
-      position: fixed; /* FIX: Changed to fixed so it covers the entire viewport regardless of scroll */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -74,7 +82,7 @@
 
     /* Particle Canvas */
     #particle-canvas {
-      position: fixed; /* FIX: Changed to fixed to stay in viewport */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -92,15 +100,13 @@
       box-shadow:
         0 0 60px var(--neon-green-shadow), /* Primary glow */
         0 0 120px var(--neon-blue-shadow); /* Secondary subtle glow */
-      backdrop-filter: blur(15px) brightness(1.1); /* Stronger blur, brighter effect */
+      backdrop-filter: blur(15px) brightness(1.1);
       border: 2px solid var(--neon-green-primary);
       animation: fadeIn 1.2s ease-in-out forwards;
       position: relative;
-      z-index: 2; /* Ensure container is above particles and grid */
-      transform-style: preserve-3d; /* For subtle parallax effects if needed */
-      /* FIX: Add margin-top and margin-bottom to ensure it's not squished to the top/bottom */
-      margin-top: 40px;
-      margin-bottom: 40px;
+      z-index: 2;
+      transform-style: preserve-3d;
+      /* Removed margin-top/bottom here, as padding on wrapper handles spacing */
     }
 
     @keyframes fadeIn {
@@ -199,7 +205,7 @@
       letter-spacing: 1.5px;
       border: 1px solid rgba(0, 255, 153, 0.3);
       position: relative;
-      overflow: hidden; /* For shimmer effect */
+      overflow: hidden;
     }
 
     .menu-buttons a::before {
@@ -220,7 +226,7 @@
     }
 
     .menu-buttons a:hover {
-      background: rgba(0, 191, 255, 0.1); /* Frosted glass effect */
+      background: rgba(0, 191, 255, 0.1);
       backdrop-filter: blur(10px) brightness(1.2);
       color: #fff;
       transform: translateY(-8px) scale(1.03);
@@ -240,10 +246,10 @@
     }
 
     .login-button, .logout-button {
-      display: inline-flex; /* Use flex for icon alignment */
+      display: inline-flex;
       align-items: center;
       background: linear-gradient(45deg, var(--neon-green-primary), #00cc80);
-      color: var(--bg-dark-primary); /* Dark text for contrast */
+      color: var(--bg-dark-primary);
       padding: 15px 30px;
       font-size: 1.2em;
       border-radius: var(--border-radius-primary);
@@ -289,7 +295,7 @@
     .fa-solid, .fa-regular {
         margin-right: 12px;
         font-size: 1.2em;
-        color: inherit; /* Inherit color from parent for better theme integration */
+        color: inherit;
         transition: color 0.3s ease;
     }
 
@@ -336,7 +342,8 @@
     }
 
     @media (max-width: 600px) {
-      body {
+      /* Adjust padding for wrapper on small screens */
+      .page-wrapper {
         padding: 20px 10px;
       }
       h1 {
@@ -387,28 +394,32 @@
 </head>
 <body>
   <canvas id="particle-canvas"></canvas> <!-- Particle background -->
-  <div class="container">
-    <h1><i class="fa-solid fa-cube"></i> ERA HUB</h1>
-    <div class="info-section">
-        <div class="balance"><i class="fa-solid fa-coins"></i> Balance: ₱<span id="coins">0</span></div>
-        <div class="username"><i class="fa-solid fa-user-astronaut"></i> Logged in as: <span id="user-display">Guest</span></div>
-    </div>
 
-    <div class="menu-buttons">
-      <a href="card.html"><i class="fa-solid fa-hand-cards"></i> Card Draw 21</a>
-      <a href="slots.html"><i class="fa-solid fa-gamepad"></i> Slot Machine</a>
-      <a href="dice.html"><i class="fa-solid fa-dice"></i> Dice Roll</a>
-      <a href="plingko.html"><i class="fa-solid fa-droplet"></i> Plingko</a>
-      <a href="crashgame.html"><i class="fa-solid fa-chart-line"></i> Crash</a>
-      <a href="mines.html"><i class="fa-solid fa-bomb"></i> Mines</a>
-      <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
-    </div>
+  <!-- FIX: New wrapper div for layout and scrolling -->
+  <div class="page-wrapper">
+    <div class="container">
+      <h1><i class="fa-solid fa-cube"></i> ERA HUB</h1>
+      <div class="info-section">
+          <div class="balance"><i class="fa-solid fa-coins"></i> Balance: ₱<span id="coins">0</span></div>
+          <div class="username"><i class="fa-solid fa-user-astronaut"></i> Logged in as: <span id="user-display">Guest</span></div>
+      </div>
 
-    <div class="auth-buttons" id="auth-buttons">
-      <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
-      <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      <div class="menu-buttons">
+        <a href="card.html"><i class="fa-solid fa-hand-cards"></i> Card Draw 21</a>
+        <a href="slots.html"><i class="fa-solid fa-gamepad"></i> Slot Machine</a>
+        <a href="dice.html"><i class="fa-solid fa-dice"></i> Dice Roll</a>
+        <a href="plingko.html"><i class="fa-solid fa-droplet"></i> Plingko</a>
+        <a href="crashgame.html"><i class="fa-solid fa-chart-line"></i> Crash</a>
+        <a href="mines.html"><i class="fa-solid fa-bomb"></i> Mines</a>
+        <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
+      </div>
+
+      <div class="auth-buttons" id="auth-buttons">
+        <a href="wallet.html" class="login-button" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login / Signup</a>
+        <button class="logout-button" id="logout-btn" style="display:none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
     </div>
-  </div>
+  </div> <!-- End of page-wrapper -->
 
   <script>
     // Particle background script
