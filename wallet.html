@@ -32,19 +32,21 @@
       --border-radius-secondary: 10px;
     }
 
+    html, body {
+      height: 100%; /* Ensure html and body take full viewport height */
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Share Tech Mono', monospace;
       background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 50%, var(--bg-dark-accent) 100%);
       color: var(--text-light);
       text-align: center;
-      /* Removed padding from body, will apply to wrapper */
-      margin: 0;
-      /* Removed min-height, display flex, align-items, justify-content from body */
       position: relative;
       background-attachment: fixed;
       box-sizing: border-box;
-      /* FIX: Ensure body can actually scroll its content */
-      min-height: 100vh; /* Re-added min-height here, but scroll will be managed by the wrapper */
+      /* Removed min-height from body as page-wrapper will manage it */
     }
 
     /* New wrapper for centering and scrolling */
@@ -53,9 +55,11 @@
       display: flex;
       flex-direction: column; /* Allows vertical centering */
       align-items: center; /* Center horizontally */
-      justify-content: center; /* Center vertically if content is small */
+      /* Removed justify-content: center; to allow content to start from top and scroll */
       padding: 30px 20px; /* Apply padding here */
       box-sizing: border-box; /* Include padding in height */
+      overflow-y: auto; /* ADDED: Allows vertical scrolling within this div */
+      -webkit-overflow-scrolling: touch; /* Improves scrolling performance on iOS */
     }
 
 
