@@ -32,10 +32,12 @@
       --border-radius-secondary: 10px;
     }
 
+    /* --- IMPORTANT FIXES FOR SCROLLING --- */
     html, body {
-      height: 100%; /* Ensure html and body take full viewport height */
+      height: 100%; /* Essential: Ensure html and body take full viewport height */
       margin: 0;
       padding: 0;
+      overflow: hidden; /* Prevent body from scrolling itself, let page-wrapper handle it */
     }
 
     body {
@@ -46,21 +48,21 @@
       position: relative;
       background-attachment: fixed;
       box-sizing: border-box;
-      /* Removed min-height from body as page-wrapper will manage it */
+      /* Removed min-height from body; page-wrapper will manage the scrollable area */
     }
 
-    /* New wrapper for centering and scrolling */
     .page-wrapper {
       min-height: 100vh; /* Make wrapper fill viewport */
       display: flex;
-      flex-direction: column; /* Allows vertical centering */
+      flex-direction: column; /* Allows content to stack vertically */
       align-items: center; /* Center horizontally */
-      /* Removed justify-content: center; to allow content to start from top and scroll */
+      /* REMOVED: justify-content: center; This prevents scrolling when content is taller than the viewport */
       padding: 30px 20px; /* Apply padding here */
       box-sizing: border-box; /* Include padding in height */
-      overflow-y: auto; /* ADDED: Allows vertical scrolling within this div */
+      overflow-y: auto; /* ADDED: Allows vertical scrolling within this div when content exceeds min-height */
       -webkit-overflow-scrolling: touch; /* Improves scrolling performance on iOS */
     }
+    /* --- END FIXES FOR SCROLLING --- */
 
 
     /* Animated Grid Background */
@@ -110,7 +112,6 @@
       position: relative;
       z-index: 2;
       transform-style: preserve-3d;
-      /* Removed margin-top/bottom here, as padding on wrapper handles spacing */
     }
 
     @keyframes fadeIn {
@@ -399,7 +400,6 @@
 <body>
   <canvas id="particle-canvas"></canvas> <!-- Particle background -->
 
-  <!-- FIX: New wrapper div for layout and scrolling -->
   <div class="page-wrapper">
     <div class="container">
       <h1><i class="fa-solid fa-cube"></i> ERA HUB</h1>
