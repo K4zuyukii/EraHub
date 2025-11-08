@@ -379,6 +379,10 @@
       }
       .auth-buttons {
         gap: 15px;
+        display: flex; /* ADDED THIS LINE */
+        flex-direction: row; /* Added for clarity in flex-wrap behavior */
+        flex-wrap: wrap; /* Ensure buttons wrap if needed */
+        justify-content: center; /* Center buttons horizontally */
       }
     }
 
@@ -558,7 +562,7 @@
 
     // In case the back button is used from wallet.html, ensure the UI updates
     window.addEventListener('pageshow', (event) => {
-        if (event.persisted) { // Check if page was loaded from cache (e.g., browser back/forward)
+        if (event.persisted) { // Check if page was loaded from cache (e.e.g., browser back/forward)
             updateUIForUser();
         }
     });
